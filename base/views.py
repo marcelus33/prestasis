@@ -19,17 +19,18 @@ class SiteLoginView(LoginView):
             # return self.handle_no_permission()
             return HttpResponseNotFound('<h1>Por favor ingrese al sistema</h1>')
         else:
-            return reverse('home')
-            # if user.groups.filter(name='Administrador').exists() or user.groups.filter(name='Operativo').exists():
-            #     return reverse('dashboard')  # Dashboard Staff
-            # elif self.request.GET.get('next'):
-            #     return self.request.GET.get('next')
-            # elif user.groups.filter(name='Proveedor').exists():
-            #     return reverse('inicio')  # Dashboard Proveedor
-            # elif user.groups.filter(name='Cliente').exists():
-            #     return reverse('inicio')  # Inicio
-        return HttpResponseNotFound('<h1>Error 404</h1>')
+            if user.is_superuser:
+                return reverse('admin-home')  # TODO vista de superuser
+            elif user.groups.filter(name='Admin').exists():
+                return reverse('admin-home')
+            elif user.groups.filter(name='Agente').exists():
+                return reverse('home')
+        return HttpResponseNotFound('<h1>No se ha encontrado página solicitada</h1>')
 
 
 class HomeView(TemplateView):
     template_name = 'home.html'
+
+
+class DashboardView(TemplateView):
+    template_name = 'dashboard.html'

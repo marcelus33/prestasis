@@ -26,8 +26,8 @@ import credito.urls
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(base.urls)),
-    path(r'^credito/', include(credito.urls)),
-    path(r'^caja/', include(caja.urls)),
+    path('credito/', include(credito.urls)),
+    path('caja/', include(caja.urls)),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
