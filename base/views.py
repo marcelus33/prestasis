@@ -1,16 +1,14 @@
+from datatableview.views import DatatableView
 from django.contrib.auth.views import LoginView
 from django.http import HttpResponseNotFound
-from django.shortcuts import render
+from django.urls import reverse, reverse_lazy
+from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView
 
-# Create your views here.
-from django.urls import reverse
-from django.views.generic import TemplateView
-
-from base import forms
+from base.forms import CuoteroForm
+from base.models import Cuotero
 
 
 class SiteLoginView(LoginView):
-    form_class = forms.UserAuthenticationForm
     template_name = 'login.html'
 
     def get_success_url(self):
@@ -34,3 +32,48 @@ class HomeView(TemplateView):
 
 class DashboardView(TemplateView):
     template_name = 'dashboard.html'
+
+
+class CuoteroListView(DatatableView):
+    template_name = 'cuotero/list.html'
+    model = Cuotero
+    context_object_name = "cuoteros"
+
+
+class CuoteroListView2(ListView):
+    template_name = 'cuotero/list.html'
+    model = Cuotero
+    context_object_name = "cuoteros"
+
+
+class CuoteroDetailView(DetailView):
+    template_name = 'cuotero/detail.html'
+    model = Cuotero
+    context_object_name = 'cuotero'
+    pk_url_kwarg = 'cuotero_id'
+
+
+class CuoteroCreateView(CreateView):
+    template_name = 'cuotero/create.html'
+    model = Cuotero
+    success_url = reverse_lazy('cuotero.list')
+    form_class = CuoteroForm
+
+
+class CuoteroUpdateView(UpdateView):
+    template_name = 'cuotero/update.html'
+    model = Cuotero
+    context_object_name = 'cuotero'
+    pk_url_kwarg = 'cuotero_id'
+    form_class = CuoteroForm
+
+    def get_success_url(self):
+        return reverse('cuotero.detail', kwargs={'cuotero_id': self.object.id})
+
+
+class CuoteroDeleteView(DeleteView):
+    template_name = 'cuotero/delete.html'
+    model = Cuotero
+    context_object_name = 'cuotero'
+    pk_url_kwarg = 'cuotero_id'
+    success_url = reverse_lazy('cuotero.list')
