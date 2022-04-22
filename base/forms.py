@@ -1,12 +1,17 @@
 import django.forms as forms
-from django.contrib.auth.forms import AuthenticationForm
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit
+
+from base.models import Cuotero
 
 
-class UserAuthenticationForm(AuthenticationForm):
-    access_token = forms.CharField(required=False, widget=forms.HiddenInput())
+class CuoteroForm(forms.ModelForm):
+
+    class Meta:
+        model = Cuotero
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        #
-        self.fields['username'].required = False
-        self.fields['password'].required = False
+        self.helper = FormHelper()
+        self.helper.add_input(Submit('submit', 'Guardar', css_class='btn-primary'))

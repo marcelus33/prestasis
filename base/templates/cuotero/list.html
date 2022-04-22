@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+  <div class="row page-titles mt-3">
+    <div class="col-md-5 col-12 align-self-center">
+      <h3 class="text-themecolor">Cuotero</h3>
+    </div>
+  </div>
+  <ul class="nav nav-pills p-3 bg-white mb-3 align-items-center">
+    <li class="nav-item ml-auto">
+      <a href="{% url 'cuotero.create' %}" class="btn btn-primary d-flex align-items-center px-3" id="add-categoria">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus"
+             viewBox="0 0 16 16">
+          <path
+            d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+        </svg>
+        <span class="ml-2 d-none d-md-block">Agregar</span>
+      </a>
+    </li>
+  </ul>
+  <div class="card mb-0">
+    <div class="card-body">
+      <div class="table-responsive">
+        {{ datatable }}
+      </div>
+    </div>
+  </div>
+{% endblock %}
