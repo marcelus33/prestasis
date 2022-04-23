@@ -5,12 +5,12 @@
 {% block content %}
   <div class="row page-titles mt-3">
     <div class="col-md-5 col-12 align-self-center">
-      <h3 class="text-themecolor">Cuotero</h3>
+      <h3 class="text-themecolor">Clientes</h3>
     </div>
   </div>
   <ul class="nav nav-pills p-3 bg-white mb-3 align-items-center">
     <li class="nav-item ml-auto">
-      <a href="{% url 'cuotero.create' %}" class="btn btn-primary d-flex align-items-center px-3" id="add-categoria">
+      <a href="{% url 'cliente.create' %}" class="btn btn-primary d-flex align-items-center px-3" id="add-categoria">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus"
              viewBox="0 0 16 16">
           <path
@@ -26,25 +26,23 @@
         <table class="datatable table table-sm table-striped table-bordered ">
           <thead>
           <tr>
-            <th>Monto</th>
-            <th>Cuotas</th>
-            <th>Tipo de plazo</th>
-            <th>Pagaré</th>
+            <th>Nombre</th>
+            <th>CI</th>
+            <th>Telefono</th>
             <th>Acciones</th>
           </tr>
           </thead>
           <tbody>
-          {% for cuotero in cuoteros %}
+          {% for cliente in clientes %}
             <tr>
-              <td>{{ cuotero.monto|intcomma }}</td>
-              <td>{{ cuotero.cuotas }}</td>
-              <td>{{ cuotero.get_tipo_plazo_display }}</td>
-              <td>{{ cuotero.pagare|intcomma }}</td>
+              <td>{{ cliente.get_nombre_completo }}</td>
+              <td>{{ cliente.ci }}</td>
+              <td>{{ cliente.telefono }}</td>
               <td>
-                <a href="{% url "cuotero.update" cuotero.id %}" class="btn btn-info">
+                <a href="{% url "cliente.update" cliente.id %}" class="btn btn-info">
                   <i class="bi bi-pencil"></i>
                 </a>
-                <a href="{% url "cuotero.delete" cuotero.id %}" class="btn btn-danger">
+                <a href="{% url "cliente.delete" cliente.id %}" class="btn btn-danger">
                   <i class="bi bi-trash"></i>
                 </a>
               </td>

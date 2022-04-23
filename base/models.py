@@ -12,13 +12,16 @@ class Cuotero(models.Model):
     )
     monto = models.PositiveIntegerField()
     cuotas = models.PositiveIntegerField()
-    tipo_plazo = models.IntegerField(choices=TIPOS_PLAZOS)
-    pagare = models.PositiveIntegerField()
+    tipo_plazo = models.IntegerField(verbose_name="Tipo de plazo", choices=TIPOS_PLAZOS)
+    pagare = models.PositiveIntegerField(verbose_name="Pagaré")
 
     class Meta:
         ordering = ('monto',)
         verbose_name = "Cuotero"
         verbose_name_plural = "Cuotas"
+
+    def __str__(self):
+        return "{} - {} - {}".format(self.monto, self.cuotas, self.get_tipo_plazo_display())
 
     def get_interes(self):
         return self.pagare - self.monto
@@ -37,6 +40,9 @@ class ComisionMora(models.Model):
         verbose_name = "Comisión y Mora"
         verbose_name_plural = "Comisiones y Moras"
 
+    def __str__(self):
+        return "{} - {} - {}".format(self.monto, self.mora_por_dia, self.comision)
+
 
 class Vendedor(models.Model):
     nombre = models.CharField(max_length=100)
@@ -46,6 +52,9 @@ class Vendedor(models.Model):
         ordering = ('apellido',)
         verbose_name = "Vendedor"
         verbose_name_plural = "Vendedores"
+
+    def __str__(self):
+        return "{}".format(self.get_nombre_completo())
 
     def get_nombre_completo(self):
         return "{}, {}".format(self.apellido, self.nombre)
@@ -62,6 +71,9 @@ class Cliente(models.Model):
         ordering = ('apellido',)
         verbose_name = "Cliente"
         verbose_name_plural = "Clientes"
+
+    def __str__(self):
+        return "{}".format(self.get_nombre_completo())
 
     def get_nombre_completo(self):
         return "{}, {}".format(self.apellido, self.nombre)
