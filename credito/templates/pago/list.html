@@ -5,12 +5,12 @@
 {% block content %}
   <div class="row page-titles mt-3">
     <div class="col-md-5 col-12 align-self-center">
-      <h3 class="text-themecolor">Clientes</h3>
+      <h3 class="text-themecolor">Pagos</h3>
     </div>
   </div>
   <ul class="nav nav-pills p-3 bg-white mb-3 align-items-center">
     <li class="nav-item ml-auto">
-      <a href="{% url 'cliente.create' %}" class="btn btn-primary d-flex align-items-center px-3" id="add-categoria">
+      <a href="{% url 'pago.create' %}" class="btn btn-primary d-flex align-items-center px-3" id="add-categoria">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus"
              viewBox="0 0 16 16">
           <path
@@ -33,19 +33,16 @@
           </tr>
           </thead>
           <tbody>
-          {% for cliente in clientes %}
+          {% for pago in pagos %}
             <tr>
-              <td>{{ cliente.get_nombre_completo }}</td>
-              <td>{{ cliente.ci }}</td>
-              <td>{{ cliente.telefono }}</td>
+              <td>{{ pago.get_nombre_completo }}</td>
+              <td>{{ pago.ci }}</td>
+              <td>{{ pago.telefono }}</td>
               <td>
-                <a href="{% url "cliente.detail" cliente.id %}" class="btn btn-info">
-                  <i class="bi bi-eye"></i>
-                </a>
-                <a href="{% url "cliente.update" cliente.id %}" class="btn btn-primary">
+                <a href="{% url "pago.update" pago.id %}" class="btn btn-info">
                   <i class="bi bi-pencil"></i>
                 </a>
-                <a href="{% url "cliente.delete" cliente.id %}" class="btn btn-danger">
+                <a href="{% url "pago.delete" pago.id %}" class="btn btn-danger">
                   <i class="bi bi-trash"></i>
                 </a>
               </td>

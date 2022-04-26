@@ -22,6 +22,9 @@ class Credito(models.Model):
         verbose_name = "Crédito"
         verbose_name_plural = "Créditos"
 
+    def __str__(self):
+        return "{}/{}".format(self.cuotero.monto, self.cuotero.pagare)
+
 
 class Cuota(models.Model):
     credito = models.ForeignKey(Credito, related_name="cuotas", on_delete=models.CASCADE)
@@ -33,6 +36,13 @@ class Cuota(models.Model):
         verbose_name = "Cuota"
         verbose_name_plural = "Cuotas"
 
+    def get_numero_cuota(self):
+        # TODO: revisar si funciona
+        cuotas = Cuota.objects.filter(credito=self.credito).order_by("fecha_vencimiento")
+        cuotas = list(cuotas.values_list("fecha_vencimiento", flat=True))
+        idx = cuotas.index(self.fecha_vencimiento)
+        return idx if idx else 0
+
 
 class Pago(models.Model):
     cuota = models.ForeignKey(Cuota, related_name="pagos", on_delete=models.PROTECT)
@@ -43,6 +53,10 @@ class Pago(models.Model):
         ordering = ('cuota', 'fecha')
         verbose_name = "Pago de cuota"
         verbose_name_plural = "Pagos de cuotas"
+
+    def __str__(self):
+        return "Pago cuota {}, crédito de {}".format(
+            {self.cuota.get_numero_cuota(), self.cuota.credito.cliente.get_nombre_completo()})
 
 
 class Comision(models.Model):

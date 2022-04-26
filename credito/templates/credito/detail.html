@@ -7,15 +7,17 @@
     <div class="col-md-7 col-12 align-self-center d-none d-md-block">
       <ol class="breadcrumb mb-0 p-0 bg-transparent float-right">
 {#        <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Inicio</a></li>#}
-        <li class="breadcrumb-item"><a href="{% url 'cliente.list' %}">Clientes</a></li>
-        <li class="breadcrumb-item active">{{ cliente }}</li>
+        <li class="breadcrumb-item"><a href="{% url 'credito.list' %}">Créditos</a></li>
+        <li class="breadcrumb-item active">{{ credito }}</li>
       </ol>
     </div>
   </div>
 
   <div class="button-group text-right mb-3">
-    <a href="{% url 'cliente.update' cliente.id %}" class="btn waves-effect waves-light btn-primary">Editar</a>
-    <a href="{% url 'cliente.delete' cliente.id %}" class="btn waves-effect waves-light btn-danger">Eliminar</a>
+    <a href="#" class="btn waves-effect waves-light btn-success"><i class="bi bi-check"></i> Aprobar</a>
+    <a href="#" class="btn waves-effect waves-light btn-warning"><i class="bi bi-x"></i> Rechazar</a>
+    <a href="{% url 'credito.update' credito.id %}" class="btn waves-effect waves-light btn-primary">Editar</a>
+    <a href="{% url 'credito.delete' credito.id %}" class="btn waves-effect waves-light btn-danger">Eliminar</a>
   </div>
 
   <div class="row">
@@ -25,8 +27,8 @@
           <table class="table table-bordered table-striped">
             <tbody>
             <tr>
-              <td style="width: 400px;">Nombre completo:</td>
-              <td>{{ cliente.get_nombre_completo }}</td>
+              <td style="width: 400px;">Cliente:</td>
+              <td>{{ credito.credito.get_nombre_completo }}</td>
             </tr>
             </tbody>
           </table>

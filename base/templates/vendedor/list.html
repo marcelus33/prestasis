@@ -37,7 +37,10 @@
               <td>{{ vendedor.nombre }}</td>
               <td>{{ vendedor.apellido }}</td>
               <td>
-                <a href="{% url "vendedor.update" vendedor.id %}" class="btn btn-info">
+                <a href="{% url "vendedor.detail" vendedor.id %}" class="btn btn-info">
+                  <i class="bi bi-eye"></i>
+                </a>
+                <a href="{% url "vendedor.update" vendedor.id %}" class="btn btn-primary">
                   <i class="bi bi-pencil"></i>
                 </a>
                 <a href="{% url "vendedor.delete" vendedor.id %}" class="btn btn-danger">
