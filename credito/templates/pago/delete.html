@@ -2,7 +2,7 @@
 {% block content %}
   <div class="row page-titles">
     <div class="col-md-5 col-12 align-self-center">
-      <h3 class="text-themecolor">Cuotero</h3>
+      <h3 class="text-themecolor">Pago</h3>
     </div>
   </div>
   <div class="row">
@@ -13,8 +13,8 @@
           <table class="table table-bordered table-striped">
             <tbody>
             <tr>
-              <td style="width: 400px;">Monto:</td>
-              <td>{{ cuotero.monto }}</td>
+              <td style="width: 400px;">Cŕedito:</td>
+              <td>{{ pago.cuota.credito }}</td>
             </tr>
             </tbody>
           </table>
@@ -22,7 +22,7 @@
             <div>
               <input type="hidden" name="post" value="yes"/>
               <input type="submit" value="Eliminar" class="btn btn-danger"/>
-              <a href="{% url 'cuotero.list' %}" class="btn btn-secondary">Cancelar</a>
+              <a href="{% url 'cliente.list' %}" class="btn btn-secondary">Cancelar</a>
             </div>
           </form>
         </div>

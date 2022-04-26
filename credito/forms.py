@@ -2,13 +2,13 @@ import django.forms as forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 
-from base.models import Cuotero, ComisionMora, Cliente, Vendedor
+from credito.models import Credito, Pago, Comision
 
 
-class CuoteroForm(forms.ModelForm):
+class CreditoForm(forms.ModelForm):
 
     class Meta:
-        model = Cuotero
+        model = Credito
         fields = '__all__'
 
     def __init__(self, *args, **kwargs):
@@ -17,10 +17,10 @@ class CuoteroForm(forms.ModelForm):
         self.helper.add_input(Submit('submit', 'Guardar', css_class='btn-primary'))
 
 
-class ComisionMoraForm(forms.ModelForm):
+class PagoForm(forms.ModelForm):
 
     class Meta:
-        model = ComisionMora
+        model = Pago
         fields = '__all__'
 
     def __init__(self, *args, **kwargs):
@@ -29,22 +29,10 @@ class ComisionMoraForm(forms.ModelForm):
         self.helper.add_input(Submit('submit', 'Guardar', css_class='btn-primary'))
 
 
-class VendedorForm(forms.ModelForm):
+class ComisionForm(forms.ModelForm):
 
     class Meta:
-        model = Vendedor
-        fields = '__all__'
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.add_input(Submit('submit', 'Guardar', css_class='btn-primary'))
-
-
-class ClienteForm(forms.ModelForm):
-
-    class Meta:
-        model = Cliente
+        model = Comision
         fields = '__all__'
 
     def __init__(self, *args, **kwargs):
