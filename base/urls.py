@@ -36,4 +36,10 @@ urlpatterns = [
     path('cliente/crear/', base.views.ClienteCreateView.as_view(), name='cliente.create'),
     path('cliente/<int:cliente_id>/editar/', base.views.ClienteUpdateView.as_view(), name='cliente.update'),
     path('cliente/<int:cliente_id>/eliminar/', base.views.ClienteDeleteView.as_view(), name='cliente.delete'),
+    # Usuario
+    path('usuario/', base.views.UsuarioListView.as_view(), name='usuario.list'),
+    path('usuario/<int:usuario_id>/', base.views.UsuarioDetailView.as_view(), name='usuario.detail'),
+    path('usuario/crear/', base.views.UsuarioCreateView.as_view(), name='usuario.create'),
+    path('usuario/<int:usuario_id>/editar/', base.views.UsuarioUpdateView.as_view(), name='usuario.update'),
+    path('usuario/<int:usuario_id>/eliminar/', base.views.UsuarioDeleteView.as_view(), name='usuario.delete'),
 ]
