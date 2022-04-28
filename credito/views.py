@@ -1,9 +1,27 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import JsonResponse
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
+from base.forms import ClienteForm
 from base.mixins import AdminMixin
-from credito.forms import CreditoForm, PagoForm, ComisionForm
+from base.models import Cliente
+from credito.forms import CreditoForm, CreditoVendedorForm, PagoForm, ComisionForm, ClienteModalForm
 from credito.models import Credito, Pago, Comision
+
+
+class ClienteCreateView(LoginRequiredMixin, CreateView):
+    template_name = 'credito/cliente_modal.html'
+    model = Cliente
+    success_url = reverse_lazy('credito.create')
+    form_class = ClienteModalForm
+
+    def form_valid(self, form):
+        if form.is_valid():
+            super(ClienteCreateView, self).form_valid(form)
+            data = {"success": True}
+            return JsonResponse(data)
+        return super(ClienteCreateView, self).form_valid(form)
 
 
 class CreditoListView(ListView):
@@ -12,8 +30,10 @@ class CreditoListView(ListView):
     context_object_name = "creditos"
 
     def get_queryset(self):
+        user = self.request.user
         queryset = super().get_queryset()
-        # TODO: solo traer creditos del Vendedor
+        if user.groups.filter(name="Agente").exists():
+            queryset = queryset.filter(vendedor__usuario=user)
         return queryset
 
 
@@ -29,6 +49,17 @@ class CreditoCreateView(CreateView):
     model = Credito
     success_url = reverse_lazy('credito.list')
     form_class = CreditoForm
+
+    def get_form_kwargs(self):
+        kwargs = super(CreditoCreateView, self).get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
+    def get_form_class(self):
+        user = self.request.user
+        if user.groups.filter(name="Agente").exists():
+            return CreditoVendedorForm
+        return CreditoForm
 
 
 class CreditoUpdateView(UpdateView):

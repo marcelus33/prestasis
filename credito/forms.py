@@ -1,7 +1,8 @@
 import django.forms as forms
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit
+from crispy_forms.layout import Submit, Button
 
+from base.models import Vendedor, Cliente
 from credito.models import Credito, Pago, Comision
 
 
@@ -11,10 +12,28 @@ class CreditoForm(forms.ModelForm):
         model = Credito
         fields = '__all__'
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, user=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(Submit('submit', 'Guardar', css_class='btn-primary'))
+
+
+class CreditoVendedorForm(forms.ModelForm):
+
+    class Meta:
+        model = Credito
+        fields = ['cliente', 'cuotero', 'vendedor']
+
+    def __init__(self, user=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        queryset = Vendedor.objects.filter(usuario=user)
+        self.fields['vendedor'].queryset = queryset
+        self.fields['vendedor'].initial = queryset.first()
+        self.helper = FormHelper()
+        self.helper.add_input(Submit('submit', 'Guardar', css_class='btn-primary'))
+        self.helper.add_input(
+            Button('button', 'Agregar cliente', data_toggle="modal", data_target="#modal-cliente", css_id='add-cliente',
+                   css_class='btn-success'))
 
 
 class PagoForm(forms.ModelForm):
@@ -39,3 +58,15 @@ class ComisionForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(Submit('submit', 'Guardar', css_class='btn-primary'))
+
+
+class ClienteModalForm(forms.ModelForm):
+
+    class Meta:
+        model = Cliente
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.add_input(Button('button', 'Guardar', css_class='btn-primary'))

@@ -38,7 +38,8 @@ class VendedorForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['usuario'].queryset = Usuario.objects.filter(vendedor__isnull=True).all()
+        # solo usuarios que no tengan vendedores asociados
+        self.fields['usuario'].queryset = Usuario.objects.filter(vendedor__isnull=True, is_superuser=False).all()
         self.helper = FormHelper()
         self.helper.add_input(Submit('submit', 'Guardar', css_class='btn-primary'))
 
