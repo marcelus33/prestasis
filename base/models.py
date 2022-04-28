@@ -22,7 +22,8 @@ class Cuotero(models.Model):
         verbose_name_plural = "Cuotas"
 
     def __str__(self):
-        return "{} - {} - {}".format(self.monto, self.cuotas, self.get_tipo_plazo_display())
+        monto = "{:,}".format(self.monto).replace(",", ".")
+        return "Monto: Gs.{} - Cuotas: {} - {}".format(monto, self.cuotas, self.get_tipo_plazo_display())
 
     def get_interes(self):
         return self.pagare - self.monto
@@ -83,7 +84,7 @@ class Cliente(models.Model):
         verbose_name_plural = "Clientes"
 
     def __str__(self):
-        return "{}".format(self.get_nombre_completo())
+        return "{} - {}".format(self.get_nombre_completo(), self.ci if self.ci else "(Sin CI)")
 
     def get_nombre_completo(self):
         return "{}, {}".format(self.apellido, self.nombre)

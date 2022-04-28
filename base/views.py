@@ -13,6 +13,7 @@ from base.models import Cuotero, ComisionMora, Vendedor, Cliente
 
 class SiteLoginView(LoginView):
     template_name = 'login.html'
+    redirect_authenticated_user = True
 
     def get_success_url(self):
         user = self.request.user
@@ -25,7 +26,7 @@ class SiteLoginView(LoginView):
                 return reverse('admin-home')
             elif user.groups.filter(name='Agente').exists():
                 return reverse('home')
-        return HttpResponseNotFound('<h1>No se ha encontrado página solicitada</h1>')
+        return reverse('login')
 
 
 class HomeView(TemplateView):

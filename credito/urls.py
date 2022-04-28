@@ -21,4 +21,6 @@ urlpatterns = [
     path('comision/crear/', credito.views.ComisionCreateView.as_view(), name='comision.create'),
     path('comision/<int:comision_id>/editar/', credito.views.ComisionUpdateView.as_view(), name='comision.update'),
     path('comision/<int:comision_id>/eliminar/', credito.views.ComisionDeleteView.as_view(), name='comision.delete'),
+    # AJAX
+    path('cliente/crear/', credito.views.ClienteCreateView.as_view(), name='cliente_ajax.create'),
 ]
