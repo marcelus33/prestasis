@@ -71,9 +71,23 @@ class Vendedor(models.Model):
         return "{}, {}".format(self.apellido, self.nombre)
 
 
+class TipoDocumento(models.Model):
+    nombre = models.CharField("Tipo de documento", max_length=32)
+
+    class Meta:
+        ordering = ('nombre',)
+        verbose_name = "Tipo de documento"
+        verbose_name_plural = "Tipos de documento"
+
+    def __str__(self):
+        return self.nombre
+
+
 class Cliente(models.Model):
     nombre = models.CharField(max_length=100)
     apellido = models.CharField(max_length=100)
+    tipo_documento = models.ForeignKey(TipoDocumento, related_name="clientes", on_delete=models.PROTECT, null=True,
+                                       blank=False)
     ci = models.CharField(max_length=16, blank=True, null=True)
     direccion = models.CharField(max_length=128, blank=True, null=True)
     telefono = models.CharField(max_length=128, blank=True, null=True)

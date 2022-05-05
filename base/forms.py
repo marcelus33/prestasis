@@ -3,7 +3,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django.contrib.auth.models import User
 
-from base.models import Cuotero, ComisionMora, Cliente, Vendedor, Usuario
+from base.models import Cuotero, ComisionMora, Cliente, Vendedor, Usuario, TipoDocumento
 
 
 class CuoteroForm(forms.ModelForm):
@@ -48,6 +48,18 @@ class VendedorForm(forms.ModelForm):
         usuario = self.cleaned_data['usuario']
         usuario = usuario.id
         return usuario
+
+
+class TipoDocumentoForm(forms.ModelForm):
+
+    class Meta:
+        model = TipoDocumento
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.add_input(Submit('submit', 'Guardar', css_class='btn-primary'))
 
 
 class ClienteForm(forms.ModelForm):

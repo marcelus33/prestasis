@@ -42,4 +42,14 @@ urlpatterns = [
     path('usuario/crear/', base.views.UsuarioCreateView.as_view(), name='usuario.create'),
     path('usuario/<int:usuario_id>/editar/', base.views.UsuarioUpdateView.as_view(), name='usuario.update'),
     path('usuario/<int:usuario_id>/eliminar/', base.views.UsuarioDeleteView.as_view(), name='usuario.delete'),
+    # TipoDocumento
+    path('tipo-documento/', base.views.TipoDocumentoListView.as_view(), name='tipo_documento.list'),
+    path('tipo-documento/<int:tipo_documento_id>/', base.views.TipoDocumentoDetailView.as_view(),
+         name='tipo_documento.detail'),
+    path('tipo-documento/crear/', base.views.TipoDocumentoCreateView.as_view(), name='tipo_documento.create'),
+    path('tipo-documento/<int:tipo_documento_id>/editar/', base.views.TipoDocumentoUpdateView.as_view(),
+         name='tipo_documento.update'),
+    path('tipo-documento/<int:tipo_documento_id>/eliminar/', base.views.TipoDocumentoDeleteView.as_view(),
+         name='tipo_documento.delete'),
+
 ]

@@ -4,13 +4,13 @@
 {% block content %}
   <div class="row page-titles">
     <div class="col-md-5 col-12 align-self-center">
-      <h3 class="text-themecolor">Editar Vendedor</h3>
+      <h3 class="text-themecolor">Editar concepto</h3>
     </div>
     <div class="col-md-7 col-12 align-self-center d-none d-md-block">
       <ol class="breadcrumb mb-0 p-0 bg-transparent float-right">
-        <li class="breadcrumb-item"><a href="{% url 'vendedor.list' %}">Vendedores</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'concepto_movimiento.list' %}">Conceptos</a></li>
         <li class="breadcrumb-item"><a
-            href="{% url 'vendedor.detail' form.instance.id %}">{{ form.instance }}</a></li>
+            href="{% url 'concepto_movimiento.detail' form.instance.id %}">{{ form.instance }}</a></li>
         <li class="breadcrumb-item active">Editar</li>
       </ol>
     </div>

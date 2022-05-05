@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div class="row page-titles">
+    <div class="col-md-5 col-12 align-self-center">
+      <h3 class="text-themecolor">Tipo de documento</h3>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <p>Confirma que desea eliminar este registro?</p>
+          <table class="table table-bordered table-striped">
+            <tbody>
+            <tr>
+              <td style="width: 400px;">Tipo:</td>
+              <td>{{ tipo_documento.nombre }}</td>
+            </tr>
+            </tbody>
+          </table>
+          <form method="post">{% csrf_token %}
+            <div>
+              <input type="hidden" name="post" value="yes"/>
+              <input type="submit" value="Eliminar" class="btn btn-danger"/>
+              <a href="{% url 'tipo_documento.list' %}" class="btn btn-secondary">Cancelar</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

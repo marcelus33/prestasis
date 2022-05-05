@@ -6,9 +6,9 @@ from django.http import HttpResponseNotFound
 from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView
 
-from base.forms import CuoteroForm, ComisionMoraForm, VendedorForm, ClienteForm, UsuarioForm
+from base.forms import CuoteroForm, ComisionMoraForm, VendedorForm, ClienteForm, UsuarioForm, TipoDocumentoForm
 from base.mixins import AdminMixin
-from base.models import Cuotero, ComisionMora, Vendedor, Cliente
+from base.models import Cuotero, ComisionMora, Vendedor, Cliente, TipoDocumento
 
 
 class SiteLoginView(LoginView):
@@ -243,3 +243,43 @@ class UsuarioDeleteView(DeleteView, AdminMixin):
     context_object_name = 'usuario'
     pk_url_kwarg = 'usuario_id'
     success_url = reverse_lazy('usuario.list')
+
+
+# TIPO DOCUMENTO
+class TipoDocumentoListView(ListView, AdminMixin):
+    template_name = 'tipo_documento/list.html'
+    model = TipoDocumento
+    context_object_name = "tipos_documento"
+
+
+class TipoDocumentoDetailView(DetailView, AdminMixin):
+    template_name = 'tipo_documento/detail.html'
+    model = TipoDocumento
+    context_object_name = 'tipo_documento'
+    pk_url_kwarg = 'tipo_documento_id'
+
+
+class TipoDocumentoCreateView(CreateView, AdminMixin):
+    template_name = 'tipo_documento/create.html'
+    model = TipoDocumento
+    success_url = reverse_lazy('tipo_documento.list')
+    form_class = TipoDocumentoForm
+
+
+class TipoDocumentoUpdateView(UpdateView, AdminMixin):
+    template_name = 'tipo_documento/update.html'
+    model = TipoDocumento
+    context_object_name = 'tipo_documento'
+    pk_url_kwarg = 'tipo_documento_id'
+    form_class = TipoDocumentoForm
+
+    def get_success_url(self):
+        return reverse('tipo_documento.detail', kwargs={'tipo_documento_id': self.object.id})
+
+
+class TipoDocumentoDeleteView(DeleteView, AdminMixin):
+    template_name = 'tipo_documento/delete.html'
+    model = TipoDocumento
+    context_object_name = 'tipo_documento'
+    pk_url_kwarg = 'tipo_documento_id'
+    success_url = reverse_lazy('tipo_documento.list')
