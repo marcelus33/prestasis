@@ -146,6 +146,27 @@
             </a>
           </li>
           <li class="nav-item">
+            <a class="nav-link" href="{% url "tipo_documento.list" %}" id="anchor-tipo-documento">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                   class=" feather bi bi-file"
+                   viewBox="0 0 16 16">
+                <path
+                  d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H4zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z"/>
+              </svg>
+              Tipos de documentos
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url "concepto_movimiento.list" %}" id="anchor-concepto">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="feather bi bi-file"
+                   viewBox="0 0 16 16">
+                <path
+                  d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H4zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z"/>
+              </svg>
+              Conceptos de caja
+            </a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" href="{% url "usuario.list" %}" id="anchor-usuario">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="feather bi bi-people"
                    viewBox="0 0 16 16">
@@ -268,7 +289,7 @@
     $(".datatable").DataTable(dtConfig);
     // Cambiar links a activos en sidemenu
     let keywords = ["dashboard", "credito", "pago", "caja", "comision",
-      "cliente", "vendedor", "cuotero", "comision-mora", "usuario"];
+      "cliente", "vendedor", "cuotero", "concepto", "tipo-documento", "comision-mora", "usuario"];
     let currentUrl = document.location.href;
     for (let i = 0; i < keywords.length; i++) {
       let kw = keywords[i];
