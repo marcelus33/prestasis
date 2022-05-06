@@ -55,20 +55,16 @@ class Usuario(User):
 
 
 class Vendedor(models.Model):
-    nombre = models.CharField(max_length=100)
-    apellido = models.CharField(max_length=100)
+    nombre = models.CharField(max_length=256)
     usuario = models.OneToOneField(Usuario, null=True, blank=True, on_delete=models.SET_NULL)
 
     class Meta:
-        ordering = ('apellido',)
+        ordering = ('nombre',)
         verbose_name = "Vendedor"
         verbose_name_plural = "Vendedores"
 
     def __str__(self):
-        return "{}".format(self.get_nombre_completo())
-
-    def get_nombre_completo(self):
-        return "{}, {}".format(self.apellido, self.nombre)
+        return "{}".format(self.nombre)
 
 
 class TipoDocumento(models.Model):
@@ -84,8 +80,7 @@ class TipoDocumento(models.Model):
 
 
 class Cliente(models.Model):
-    nombre = models.CharField(max_length=100)
-    apellido = models.CharField(max_length=100)
+    nombre = models.CharField(max_length=256)
     tipo_documento = models.ForeignKey(TipoDocumento, related_name="clientes", on_delete=models.PROTECT, null=True,
                                        blank=False)
     ci = models.CharField(max_length=16, blank=True, null=True)
@@ -93,12 +88,11 @@ class Cliente(models.Model):
     telefono = models.CharField(max_length=128, blank=True, null=True)
 
     class Meta:
-        ordering = ('apellido',)
+        unique_together = ('tipo_documento', 'ci')
+        ordering = ('nombre',)
         verbose_name = "Cliente"
         verbose_name_plural = "Clientes"
 
     def __str__(self):
-        return "{} - {}".format(self.get_nombre_completo(), self.ci if self.ci else "(Sin CI)")
+        return "{} - {}".format(self.nombre, self.ci if self.ci else "(Sin CI)")
 
-    def get_nombre_completo(self):
-        return "{}, {}".format(self.apellido, self.nombre)

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static crispy_forms_tags %}
+{% block content %}
+  <div class="row page-titles">
+    <div class="col-md-5 col-12 align-self-center">
+      <h3 class="text-themecolor">Importar clientes</h3>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          {% crispy form %}
+        </div>
+      </div>
+    </div>
+  </div>
+<div class="row mt-2">
+  <div class="col-12">
+    {% if success %}
+    <div class="alert alert-success">
+      {{ message }}
+    </div>
+    {% elif success == False %}
+    <div class="alert alert-danger">
+      {{ message }}
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

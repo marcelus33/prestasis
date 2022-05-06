@@ -35,7 +35,7 @@
           <tbody>
           {% for comision in comisiones %}
             <tr>
-              <td>{{ comision.vendedor.get_nombre_completo }}</td>
+              <td>{{ comision.vendedor.nombre }}</td>
               <td>{{ comision.credito }}</td>
               <td>{{ comision.get_estado_display }}</td>
               <td>

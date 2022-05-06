@@ -1,12 +1,17 @@
+from io import BytesIO
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, ValidationError
+from django.db import transaction
 from django.http import HttpResponseNotFound
 from django.urls import reverse, reverse_lazy
-from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView, FormView
+from openpyxl import load_workbook
 
-from base.forms import CuoteroForm, ComisionMoraForm, VendedorForm, ClienteForm, UsuarioForm, TipoDocumentoForm
+from base.forms import CuoteroForm, ComisionMoraForm, VendedorForm, ClienteForm, UsuarioForm, TipoDocumentoForm, \
+    ImportadorClienteForm
 from base.mixins import AdminMixin
 from base.models import Cuotero, ComisionMora, Vendedor, Cliente, TipoDocumento
 
@@ -283,3 +288,63 @@ class TipoDocumentoDeleteView(DeleteView, AdminMixin):
     context_object_name = 'tipo_documento'
     pk_url_kwarg = 'tipo_documento_id'
     success_url = reverse_lazy('tipo_documento.list')
+
+
+class ImportadorClienteView(FormView):
+    template_name = "cliente/importador.html"
+    form_class = ImportadorClienteForm
+
+    def procesar_xls(self, file):
+        response = {
+            "success": True,
+            "message": "Importados los datos con éxito."
+        }
+        wb = load_workbook(filename=BytesIO(file.read()))
+        ws = wb.worksheets[0]
+        rowCount = 0
+        errores = []
+        tipo_documento = TipoDocumento.objects.filter(nombre__icontains="CEDULA").first()
+        tipo_documento = tipo_documento if tipo_documento else TipoDocumento.objects.filter(nombre__icontains="CÉDULA").first()
+        try:
+            with transaction.atomic():
+                for row in ws.iter_rows():
+                    rowCount += 1
+                    nombre = row[0].value
+                    documento = str(row[1].value)
+                    direccion = row[2].value
+                    cliente, created = Cliente.objects.update_or_create(
+                        nombre=nombre,
+                        tipo_documento=tipo_documento if tipo_documento else None,
+                        ci=documento,
+                        direccion=direccion,
+                    )
+        except Exception as e:
+            errores.append(rowCount)
+
+        if len(errores):
+            response['success'] = False
+            response['message'] = "Errores en las filas: {}".format(', '.join(str(e) for e in errores))
+
+        return response
+
+
+    def post(self, request, *args, **kwargs):
+        response = {}
+        if request.FILES.get('documento', False):
+            file = request.FILES['documento']
+            filename = file.name
+            extension = filename.split('.')[-1]
+            if extension in ['xls', 'xlsx']:
+                response = self.procesar_xls(file)
+            else:
+                response = {
+                    "success": False,
+                    "message": "Formato de archivo no válido."
+                }
+            return self.render_to_response(self.get_context_data(**response))
+        return self.render_to_response(self.get_context_data())
+
+    def get_context_data(self, **kwargs):
+        context = super(ImportadorClienteView, self).get_context_data(**kwargs)
+        context['activo'] = 'organizacion'
+        return context
