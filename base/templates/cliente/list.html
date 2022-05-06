@@ -8,9 +8,14 @@
       <h3 class="text-themecolor">Clientes</h3>
     </div>
   </div>
-  <ul class="nav nav-pills p-3 bg-white mb-3 align-items-center">
-    <li class="nav-item ml-auto">
-      <a href="{% url 'cliente.create' %}" class="btn btn-primary d-flex align-items-center px-3" id="add-categoria">
+  <ul class="nav nav-pills p-3 bg-white mb-3 align-items-center justify-content-end">
+  <li class="nav-item">
+      <a href="{% url "cliente.import" %}" class="btn btn-success d-flex align-items-center px-3">
+        <span class="ml-2 d-none d-md-block">Importador Excel</span>
+      </a>
+    </li>
+    <li class="nav-item ml-2">
+      <a href="{% url 'cliente.create' %}" class="btn btn-primary d-flex align-items-center px-3">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus"
              viewBox="0 0 16 16">
           <path
@@ -35,7 +40,7 @@
           <tbody>
           {% for cliente in clientes %}
             <tr>
-              <td>{{ cliente.get_nombre_completo }}</td>
+              <td>{{ cliente.nombre }}</td>
               <td>{{ cliente.ci }}</td>
               <td>{{ cliente.telefono }}</td>
               <td>

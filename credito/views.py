@@ -36,6 +36,11 @@ class CreditoListView(ListView):
             queryset = queryset.filter(vendedor__usuario=user)
         return queryset
 
+    def get_context_data(self, **kwargs):
+        context = super(CreditoListView, self).get_context_data(**kwargs)
+        context["activo"] = "todos"
+        return context
+
 
 class CreditoDetailView(DetailView):
     template_name = 'credito/detail.html'
@@ -79,6 +84,70 @@ class CreditoDeleteView(DeleteView, AdminMixin):
     context_object_name = 'credito'
     pk_url_kwarg = 'credito_id'
     success_url = reverse_lazy('credito.list')
+
+
+class CreditoPendienteListView(CreditoListView):
+    template_name = 'credito/list.html'
+    model = Credito
+    context_object_name = "creditos"
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.filter(estado=Credito.PENDIENTE)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super(CreditoListView, self).get_context_data(**kwargs)
+        context["activo"] = "pendientes"
+        return context
+
+
+class CreditoAprobadoListView(CreditoListView):
+    template_name = 'credito/list.html'
+    model = Credito
+    context_object_name = "creditos"
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.filter(estado=Credito.APROBADO)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super(CreditoListView, self).get_context_data(**kwargs)
+        context["activo"] = "aprobados"
+        return context
+
+
+class CreditoDesembolsadoListView(CreditoListView):
+    template_name = 'credito/list.html'
+    model = Credito
+    context_object_name = "creditos"
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.filter(estado=Credito.DESEMBOLSADO)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super(CreditoListView, self).get_context_data(**kwargs)
+        context["activo"] = "desembolsados"
+        return context
+
+
+class CreditoRechazadoListView(CreditoListView):
+    template_name = 'credito/list.html'
+    model = Credito
+    context_object_name = "creditos"
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.filter(estado=Credito.RECHAZADO)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super(CreditoListView, self).get_context_data(**kwargs)
+        context["activo"] = "rechazados"
+        return context
 
 
 # PAGOS

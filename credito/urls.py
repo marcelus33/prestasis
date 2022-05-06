@@ -9,6 +9,11 @@ urlpatterns = [
     path('credito/crear/', credito.views.CreditoCreateView.as_view(), name='credito.create'),
     path('credito/<int:credito_id>/editar/', credito.views.CreditoUpdateView.as_view(), name='credito.update'),
     path('credito/<int:credito_id>/eliminar/', credito.views.CreditoDeleteView.as_view(), name='credito.delete'),
+    path('credito/pendientes/', credito.views.CreditoPendienteListView.as_view(), name='credito_pendientes.list'),
+    path('credito/aprobados/', credito.views.CreditoAprobadoListView.as_view(), name='credito_aprobados.list'),
+    path('credito/desembolsados/', credito.views.CreditoDesembolsadoListView.as_view(),
+         name='credito_desembolsados.list'),
+    path('credito/rechazados/', credito.views.CreditoRechazadoListView.as_view(), name='credito_rechazados.list'),
     # PAGOS
     path('pago/', credito.views.PagoListView.as_view(), name='pago.list'),
     path('pago/<int:pago_id>/', credito.views.PagoDetailView.as_view(), name='pago.detail'),

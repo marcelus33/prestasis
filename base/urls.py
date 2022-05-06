@@ -36,6 +36,7 @@ urlpatterns = [
     path('cliente/crear/', base.views.ClienteCreateView.as_view(), name='cliente.create'),
     path('cliente/<int:cliente_id>/editar/', base.views.ClienteUpdateView.as_view(), name='cliente.update'),
     path('cliente/<int:cliente_id>/eliminar/', base.views.ClienteDeleteView.as_view(), name='cliente.delete'),
+    path('cliente/importador/', base.views.ImportadorClienteView.as_view(), name='cliente.import'),
     # Usuario
     path('usuario/', base.views.UsuarioListView.as_view(), name='usuario.list'),
     path('usuario/<int:usuario_id>/', base.views.UsuarioDetailView.as_view(), name='usuario.detail'),

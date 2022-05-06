@@ -7,10 +7,12 @@ class Credito(models.Model):
     PENDIENTE = 1
     APROBADO = 2
     RECHAZADO = 3
+    DESEMBOLSADO = 4
     ESTADOS_CREDITO = (
         (PENDIENTE, "Pendiente"),
         (APROBADO, "Aprobado"),
         (RECHAZADO, "Rechazado"),
+        (DESEMBOLSADO, "Desembolsado"),
     )
     cliente = models.ForeignKey(Cliente, related_name="creditos", on_delete=models.PROTECT)
     vendedor = models.ForeignKey(Vendedor, related_name="creditos", on_delete=models.PROTECT)
@@ -27,6 +29,15 @@ class Credito(models.Model):
 
     def __str__(self):
         return "{}/{}".format(self.cuotero.monto, self.cuotero.pagare)
+
+    def esta_pendiente(self):
+        return self.estado == self.PENDIENTE
+
+    def fue_aprobado(self):
+        return self.estado == self.APROBADO
+
+    def fue_desembolsado(self):
+        return self.estado == self.DESEMBOLSADO
 
 
 class Cuota(models.Model):
@@ -59,7 +70,7 @@ class Pago(models.Model):
 
     def __str__(self):
         return "Pago cuota {}, crédito de {}".format(
-            {self.cuota.get_numero_cuota(), self.cuota.credito.cliente.get_nombre_completo()})
+            {self.cuota.get_numero_cuota(), self.cuota.credito.cliente.nombre})
 
 
 class Comision(models.Model):

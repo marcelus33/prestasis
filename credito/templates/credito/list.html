@@ -8,18 +8,24 @@
       <h3 class="text-themecolor">Cŕeditos</h3>
     </div>
   </div>
-  <ul class="nav nav-pills p-3 bg-white mb-3 align-items-center">
-    <li class="nav-item ml-auto">
-      <a href="{% url 'credito.create' %}" class="btn btn-primary d-flex align-items-center px-3" id="add-categoria">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus"
-             viewBox="0 0 16 16">
-          <path
-            d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
-        </svg>
-        <span class="ml-2 d-none d-md-block">Agregar</span>
+
+  <div class="row mt-1">
+    <div class="col-12">
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
+        <div class="d-flex flex-column flex-md-row justify-content-between">
+          <a href="{% url "credito.list" %}" class="btn {% if activo == "todos" %}btn-primary{% endif %} mr-md-1 mb-2">Todos</a>
+          <a href="{% url "credito_pendientes.list" %}" class="btn {% if activo == "pendientes" %}btn-warning{% endif %} mr-md-1 mb-2">Pendientes</a>
+          <a href="{% url "credito_aprobados.list" %}" class="btn {% if activo == "aprobados" %}btn-success{% endif %} mr-md-1 mb-2">Aprobados</a>
+          <a href="{% url "credito_desembolsados.list" %}" class="btn {% if activo == "desembolsados" %}btn-info{% endif %} mr-md-1 mb-2">Desembolsados</a>
+          <a href="{% url "credito_rechazados.list" %}" class="btn {% if activo == "rechazados" %}btn-danger{% endif %} mr-md-1 mb-2">Rechazados</a>
+        </div>
+        <a href="{% url 'credito.create' %}" class="btn btn-primary">
+        Agregar
       </a>
-    </li>
-  </ul>
+      </div>
+    </div>
+  </div>
+
   <div class="card mb-0">
     <div class="card-body">
       <div class="table-responsive">
@@ -36,12 +42,12 @@
           <tbody>
           {% for credito in creditos %}
             <tr>
-              <td>{{ credito.cliente.get_nombre_completo }}</td>
-              <td>{{ credito.vendedor.get_nombre_completo }}</td>
+              <td>{{ credito.cliente.nombre }}</td>
+              <td>{{ credito.vendedor.nombre }}</td>
               <td>{{ credito.cuotero.pagare|intcomma }}</td>
               <td>{{ credito.get_estado_display }}</td>
               <td>
-                 <a href="{% url "credito.detail" credito.id %}" class="btn btn-info">
+                <a href="{% url "credito.detail" credito.id %}" class="btn btn-info">
                   <i class="bi bi-eye"></i>
                 </a>
                 <a href="{% url "credito.update" credito.id %}" class="btn btn-primary">
