@@ -6,22 +6,37 @@
       <h3 class="text-themecolor">Solicitud</h3>
     </div>
     <div class="col-md-7 col-12 align-self-center d-none d-md-block">
-      <ol class="breadcrumb mb-0 p-0 bg-transparent float-right">.
+      <ol class="breadcrumb mb-0 p-0 bg-transparent float-right">
         <li class="breadcrumb-item"><a href="{% url 'credito.list' %}">Créditos</a></li>
         <li class="breadcrumb-item active">{{ credito }}</li>
       </ol>
     </div>
   </div>
-
-  <div class="button-group text-right mb-3">
+  <div class="d-flex flex-column flex-md-row justify-content-end justify-md-content-between align-items-md-center">
     {% if credito.esta_pendiente %}
-      <button id="btn-aprobar" type="button" class="btn waves-effect waves-light btn-success"><i class="bi bi-check"></i> Aprobar</button>
-      <button id="btn-rechazar" type="button" class="btn waves-effect waves-light btn-warning"><i class="bi bi-x"></i> Rechazar</button>
-    {% elif credito.fue_aprobado %}
-      <button id="#btn-desembolsar" type="button" class="btn waves-effect waves-light btn-success"><i class="bi bi-check"></i> Desembolsar</button>
+      <button id="btn-aprobar" type="button" class="btn waves-effect waves-light btn-success mr-2 mb-2">
+        <i class="bi bi-check"></i> Aprobar
+      </button>
+      <button id="btn-rechazar" type="button" class="btn waves-effect waves-light btn-warning mr-2 mb-2">
+        <i class="bi bi-x"></i> Rechazar
+      </button>
+    {% elif credito.fue_aprobado and not credito.fue_desembolsado %}
+      <a id="#btn-desembolsar" href="{% url "credito.desembolsar" credito.id %}"
+         class="btn waves-effect waves-light btn-success mr-2 mb-2">
+        <i class="bi bi-check"></i> Desembolsar
+      </a>
+    {% elif credito.fue_desembolsado %}
+      <a id="#btn-cuotas" href="#"
+         class="btn waves-effect waves-light btn-info mr-2 mb-2">
+        <i class="bi bi-file-spreadsheet"></i> Ver cuotas
+      </a>
     {% endif %}
-    <a href="{% url 'credito.update' credito.id %}" class="btn waves-effect waves-light btn-primary">Editar</a>
-    <a href="{% url 'credito.delete' credito.id %}" class="btn waves-effect waves-light btn-danger">Eliminar</a>
+    <a href="{% url 'credito.update' credito.id %}" class="btn waves-effect waves-light btn-primary mr-2 mb-2">
+      <i class="bi bi-pencil"></i> Editar
+    </a>
+    <a href="{% url 'credito.delete' credito.id %}" class="btn waves-effect waves-light btn-danger mr-2 mb-2">
+      <i class="bi bi-trash"></i> Eliminar
+    </a>
   </div>
 
   <div class="row">
@@ -70,10 +85,14 @@
               <td>Estado:</td>
               <td>{{ credito.get_estado_display }}</td>
             </tr>
-            <tr>
-              <td>Aprobado / Rechazado el:</td>
-              <td>{{ credito.fecha_aprobacion|default:"Pendiente" }}</td>
-            </tr>
+            {% if credito.fecha_aprobacion %}
+              <tr>
+                <td>{% if credito.estado == 2 or credito.estado == 4 %}Aprobado{% elif credito.estado == 3 %}
+                  Rechazado{% endif %} el:
+                </td>
+                <td>{{ credito.fecha_aprobacion|default:"Pendiente" }}</td>
+              </tr>
+            {% endif %}
             {% if  credito.comentario %}
               <tr>
                 <td>Comentarios:</td>
