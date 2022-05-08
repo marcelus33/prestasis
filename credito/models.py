@@ -30,6 +30,9 @@ class Credito(models.Model):
     def __str__(self):
         return "{}/{}".format(self.cuotero.monto, self.cuotero.pagare)
 
+    def esta_procesado(self):
+        return self.estado > self.PENDIENTE
+
     def esta_pendiente(self):
         return self.estado == self.PENDIENTE
 

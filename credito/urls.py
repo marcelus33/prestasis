@@ -28,4 +28,5 @@ urlpatterns = [
     path('comision/<int:comision_id>/eliminar/', credito.views.ComisionDeleteView.as_view(), name='comision.delete'),
     # AJAX
     path('cliente/crear/', credito.views.ClienteCreateView.as_view(), name='cliente_ajax.create'),
+    path('credito/procesar/', credito.views.CreditoProcesarView.as_view(), name='credito_ajax.procesar'),
 ]

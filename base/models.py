@@ -94,5 +94,5 @@ class Cliente(models.Model):
         verbose_name_plural = "Clientes"
 
     def __str__(self):
-        return "{} - {}".format(self.nombre, self.ci if self.ci else "(Sin CI)")
+        return "{}".format(self.nombre)
 

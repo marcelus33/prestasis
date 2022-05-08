@@ -1,6 +1,9 @@
+import datetime
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from django.urls import reverse, reverse_lazy
+from django.views import View
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from base.forms import ClienteForm
@@ -8,6 +11,32 @@ from base.mixins import AdminMixin
 from base.models import Cliente
 from credito.forms import CreditoForm, CreditoVendedorForm, PagoForm, ComisionForm, ClienteModalForm
 from credito.models import Credito, Pago, Comision
+
+
+class CreditoProcesarView(View):
+
+    def post(self, request):
+        codigo = int(request.POST.get('codigo'))
+        credito_id = int(request.POST.get('creditoId'))
+        credito = Credito.objects.get(pk=credito_id)
+        data = {"success": True}
+        if credito and not credito.esta_procesado():
+            if codigo == 1:
+                credito.estado = Credito.APROBADO
+                credito.fecha_aprobacion = datetime.datetime.now()
+                credito.save()
+                # TODO: GENERAR CUOTAS
+            elif codigo == 2:
+                credito.estado = Credito.RECHAZADO
+                credito.fecha_aprobacion = datetime.datetime.now()
+                credito.save()
+            else:
+                data = {"success": False}
+        else:
+            data = {"success": False}
+
+
+        return JsonResponse(data)
 
 
 class ClienteCreateView(LoginRequiredMixin, CreateView):

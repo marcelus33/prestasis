@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load humanize static %}
 {% block content %}
   <div class="row page-titles">
     <div class="col-md-5 col-12 align-self-center">
@@ -14,10 +15,10 @@
 
   <div class="button-group text-right mb-3">
     {% if credito.esta_pendiente %}
-      <a href="#" class="btn waves-effect waves-light btn-success"><i class="bi bi-check"></i> Aprobar</a>
-      <a href="#" class="btn waves-effect waves-light btn-warning"><i class="bi bi-x"></i> Rechazar</a>
+      <button id="btn-aprobar" type="button" class="btn waves-effect waves-light btn-success"><i class="bi bi-check"></i> Aprobar</button>
+      <button id="btn-rechazar" type="button" class="btn waves-effect waves-light btn-warning"><i class="bi bi-x"></i> Rechazar</button>
     {% elif credito.fue_aprobado %}
-      <a href="#" class="btn waves-effect waves-light btn-success"><i class="bi bi-check"></i> Desembolsar</a>
+      <button id="#btn-desembolsar" type="button" class="btn waves-effect waves-light btn-success"><i class="bi bi-check"></i> Desembolsar</button>
     {% endif %}
     <a href="{% url 'credito.update' credito.id %}" class="btn waves-effect waves-light btn-primary">Editar</a>
     <a href="{% url 'credito.delete' credito.id %}" class="btn waves-effect waves-light btn-danger">Eliminar</a>
@@ -30,13 +31,74 @@
           <table class="table table-bordered table-striped">
             <tbody>
             <tr>
-              <td style="width: 400px;">Cliente:</td>
-              <td>{{ credito.credito.nombre }}</td>
+              <td>Solicitado el:</td>
+              <td>{{ credito.fecha_alta }}</td>
             </tr>
+            <tr>
+              <td>Detalle:</td>
+              <td>{{ credito.cuotero }}</td>
+            </tr>
+            <tr>
+              <td>Cliente:</td>
+              <td>{{ credito.cliente }}</td>
+            </tr>
+            <tr>
+              <td>Documento:</td>
+              <td>
+                {% if credito.cliente.tipo_documento %}
+                  {{ credito.cliente.tipo_documento }}
+                  - {% endif %}{{ credito.cliente.ci|intcomma }}</td>
+            </tr>
+            <tr>
+              <td>Dirección y teléfono:</td>
+              <td>
+                {% if credito.cliente.direccion %}
+                  {{ credito.cliente.direccion }}
+                {% endif %}
+                {% if credito.cliente.telefono %}
+                  - {{ credito.cliente.telefono }}
+                {% endif %}
+              </td>
+            </tr>
+            <tr>
+              <td>Agente:</td>
+              <td>{{ credito.vendedor }}</td>
+            </tr>
+
+
+            <tr>
+              <td>Estado:</td>
+              <td>{{ credito.get_estado_display }}</td>
+            </tr>
+            <tr>
+              <td>Aprobado / Rechazado el:</td>
+              <td>{{ credito.fecha_aprobacion|default:"Pendiente" }}</td>
+            </tr>
+            {% if  credito.comentario %}
+              <tr>
+                <td>Comentarios:</td>
+                <td>{{ credito.comentario|default:"" }}</td>
+              </tr>
+            {% endif %}
+            {% if credito.fecha_desembolso %}
+              <tr>
+                <td>Desembolsado el:</td>
+                <td>{{ credito.fecha_desembolso|default:"" }}</td>
+              </tr>
+            {% endif %}
             </tbody>
           </table>
         </div>
       </div>
     </div>
   </div>
+{% endblock %}
+
+{% block extra-js %}
+  <script type="text/javascript">
+    var csrfmiddlewaretoken = "{{ csrf_token }}";
+    var creditoId = "{{ credito.id }}";
+    var urlProcesarCredito = "{% url "credito_ajax.procesar" %}";
+  </script>
+  <script src="{% static "js/credito_detail.js" %}"></script>
 {% endblock %}
