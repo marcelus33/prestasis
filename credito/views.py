@@ -2,6 +2,7 @@ import datetime
 
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import ValidationError
 from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
@@ -13,6 +14,7 @@ from base.mixins import AdminMixin
 from base.models import Cliente
 from credito.forms import CreditoForm, CreditoVendedorForm, PagoForm, ComisionForm, ClienteModalForm, \
     CreditoDesembolsarForm
+from credito.helpers import crear_cuotas
 from credito.models import Credito, Pago, Comision
 
 
@@ -36,8 +38,6 @@ class CreditoProcesarView(View):
                 data = {"success": False}
         else:
             data = {"success": False}
-
-
         return JsonResponse(data)
 
 
@@ -202,8 +202,13 @@ class CreditoDesembolsarView(UpdateView):
     def form_valid(self, form):
         credito = form.save(commit=False)
         credito.estado = Credito.DESEMBOLSADO
-        credito.save()
-        # TODO: crear cuotas y movimiento de Caja
+        creado = crear_cuotas(credito)
+        if creado:
+            credito.save()
+            # TODO crear registro de CAJA por desembolso
+        else:
+            messages.add_message(self.request, messages.WARNING, 'No se pudieron crear las cuotas.')
+            return super().form_invalid(form)
         return super().form_valid(form)
 
 

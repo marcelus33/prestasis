@@ -2,6 +2,7 @@ import django.forms as forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django.contrib.auth.models import User
+from django.core.validators import RegexValidator
 
 from base.models import Cuotero, ComisionMora, Cliente, Vendedor, Usuario, TipoDocumento
 
@@ -63,6 +64,8 @@ class TipoDocumentoForm(forms.ModelForm):
 
 
 class ClienteForm(forms.ModelForm):
+    ci = forms.CharField(max_length=16,
+                         validators=[RegexValidator("r'^[0-9]+$", message="Sólo puede ingresar números.")])
 
     class Meta:
         model = Cliente
@@ -78,8 +81,7 @@ class UsuarioForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ['username', 'password', 'first_name', 'last_name', 'email', 'is_active', 'is_superuser']
-        # fields = '__all__'
+        fields = ['username', 'password', 'first_name', 'last_name', 'email', 'groups', 'is_active', 'is_superuser']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

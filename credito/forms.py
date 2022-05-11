@@ -13,7 +13,7 @@ class CreditoForm(forms.ModelForm):
 
     class Meta:
         model = Credito
-        fields = '__all__'
+        fields = ['cliente', 'cuotero', 'vendedor']
 
     def __init__(self, user=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -58,6 +58,16 @@ class CreditoDesembolsarForm(forms.ModelForm):
         })
         self.helper = FormHelper()
         self.helper.add_input(Submit('submit', 'Guardar', css_class='btn-primary'))
+
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        fecha_desembolso = cleaned_data.get("fecha_desembolso")
+        fecha_aprobacion = self.save(commit=False).fecha_aprobacion
+        if fecha_aprobacion > fecha_desembolso:
+            msg = "La fecha de desembolso no puede ser menor a la fecha de aprobación ({}).".format(
+                fecha_aprobacion.strftime("%d/%m/%Y"))
+            self.add_error('fecha_desembolso', msg)
+        return cleaned_data
 
 
 class PagoForm(forms.ModelForm):

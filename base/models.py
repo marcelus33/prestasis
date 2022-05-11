@@ -3,12 +3,14 @@ from django.db import models
 
 
 class Cuotero(models.Model):
-    SEMANAL = 8
-    QUINCENAL = 15
+    SEMANAL = 7
+    QUINCENAL = 14
     MENSUAL = 30
     TIPOS_PLAZOS = (
         (SEMANAL, "Semanal"),
+        (8, "Semanal"),
         (QUINCENAL, "Quincenal"),
+        (15, "Quincenal"),
         (MENSUAL, "Mensual"),
     )
     monto = models.PositiveIntegerField()
@@ -88,7 +90,7 @@ class Cliente(models.Model):
     telefono = models.CharField(max_length=128, blank=True, null=True)
 
     class Meta:
-        unique_together = ('tipo_documento', 'ci')
+        unique_together = [['tipo_documento', 'ci']]
         ordering = ('nombre',)
         verbose_name = "Cliente"
         verbose_name_plural = "Clientes"
