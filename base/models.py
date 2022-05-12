@@ -13,13 +13,13 @@ class Cuotero(models.Model):
         (15, "Quincenal"),
         (MENSUAL, "Mensual"),
     )
-    monto = models.PositiveIntegerField()
-    cuotas = models.PositiveIntegerField()
+    monto = models.PositiveIntegerField(verbose_name="Monto del préstamo")
+    cuotas = models.PositiveIntegerField(verbose_name="Cantidad de cuotas")
     tipo_plazo = models.IntegerField(verbose_name="Tipo de plazo", choices=TIPOS_PLAZOS)
     pagare = models.PositiveIntegerField(verbose_name="Pagaré")
 
     class Meta:
-        ordering = ('monto',)
+        ordering = ['monto', 'pagare']
         verbose_name = "Cuotero"
         verbose_name_plural = "Cuotas"
 
@@ -31,7 +31,7 @@ class Cuotero(models.Model):
         return self.pagare - self.monto
 
     def get_monto_cuota(self):
-        return self.pagare / self.cuotas if self.cuotas else 0
+        return int(self.pagare / self.cuotas) if self.cuotas else 0
 
 
 class ComisionMora(models.Model):
