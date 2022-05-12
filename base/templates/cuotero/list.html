@@ -23,11 +23,12 @@
   <div class="card mb-0">
     <div class="card-body">
       <div class="table-responsive">
-        <table class="datatable table table-sm table-striped table-bordered ">
+        <table class="datatable table table-sm table-striped table-bordered">
           <thead>
           <tr>
-            <th>Monto</th>
+            <th>Monto prestado</th>
             <th>Cuotas</th>
+            <th>Monto cuota</th>
             <th>Tipo de plazo</th>
             <th>Pagaré</th>
             <th>Acciones</th>
@@ -38,6 +39,7 @@
             <tr>
               <td>{{ cuotero.monto|intcomma }}</td>
               <td>{{ cuotero.cuotas }}</td>
+              <td>{{ cuotero.get_monto_cuota|intcomma }}</td>
               <td>{{ cuotero.get_tipo_plazo_display }}</td>
               <td>{{ cuotero.pagare|intcomma }}</td>
               <td>

@@ -8,6 +8,17 @@ from base.models import Cuotero, ComisionMora, Cliente, Vendedor, Usuario, TipoD
 
 
 class CuoteroForm(forms.ModelForm):
+    monto_cuota = forms.IntegerField(required=False, disabled=True)
+
+    SEMANAL = 7
+    QUINCENAL = 14
+    MENSUAL = 30
+    TIPOS_PLAZOS = (
+        (SEMANAL, "Semanal"),
+        (QUINCENAL, "Quincenal"),
+        (MENSUAL, "Mensual"),
+    )
+    # field_order = ['monto', 'cuotas', 'monto_cuota', 'tipo_plazo', 'pagare']
 
     class Meta:
         model = Cuotero
@@ -15,6 +26,7 @@ class CuoteroForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['tipo_plazo'] = forms.ChoiceField(choices=self.TIPOS_PLAZOS)
         self.helper = FormHelper()
         self.helper.add_input(Submit('submit', 'Guardar', css_class='btn-primary'))
 
@@ -65,7 +77,7 @@ class TipoDocumentoForm(forms.ModelForm):
 
 class ClienteForm(forms.ModelForm):
     ci = forms.CharField(max_length=16,
-                         validators=[RegexValidator("r'^[0-9]+$", message="Sólo puede ingresar números.")])
+                         validators=[RegexValidator("^[0-9]*$", message="Sólo puede ingresar números.")])
 
     class Meta:
         model = Cliente
