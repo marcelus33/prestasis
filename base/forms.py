@@ -1,6 +1,7 @@
 import django.forms as forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
 
@@ -89,11 +90,23 @@ class ClienteForm(forms.ModelForm):
         self.helper.add_input(Submit('submit', 'Guardar', css_class='btn-primary'))
 
 
-class UsuarioForm(forms.ModelForm):
+class UsuarioForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ['username', 'password', 'first_name', 'last_name', 'email', 'groups', 'is_active', 'is_superuser']
+        fields = ['username', 'first_name', 'last_name', 'email', 'groups', 'is_active', 'is_superuser']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.add_input(Submit('submit', 'Guardar', css_class='btn-primary'))
+
+
+class UsuarioChangeForm(UserChangeForm):
+
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'last_name', 'email', 'groups', 'is_active', 'is_superuser']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

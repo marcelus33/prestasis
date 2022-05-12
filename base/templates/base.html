@@ -22,7 +22,13 @@
           data-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
-  <ul class="navbar-nav px-3">
+  <ul class="navbar-nav px-3 d-flex flex-row align-items-center">
+    <li class="nav-item text-nowrap mr-3">
+      <div class="text-light d-flex align-items center">
+        <i class="bi bi-person-circle mr-1"></i>
+        <span>{{ user.username }}</span>
+      </div>
+    </li>
     <li class="nav-item text-nowrap">
       <a class="nav-link" href="{% url "logout" %}">Cerrar sesión</a>
     </li>
