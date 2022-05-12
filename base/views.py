@@ -1,5 +1,7 @@
 from io import BytesIO
 
+from django.contrib import messages
+from django.contrib.auth import logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView
@@ -11,7 +13,7 @@ from django.views.generic import TemplateView, ListView, DetailView, CreateView,
 from openpyxl import load_workbook
 
 from base.forms import CuoteroForm, ComisionMoraForm, VendedorForm, ClienteForm, UsuarioForm, TipoDocumentoForm, \
-    ImportadorClienteForm
+    ImportadorClienteForm, UsuarioChangeForm
 from base.mixins import AdminMixin
 from base.models import Cuotero, ComisionMora, Vendedor, Cliente, TipoDocumento
 
@@ -31,6 +33,8 @@ class SiteLoginView(LoginView):
                 return reverse('admin-home')
             elif user.groups.filter(name='Agente').exists():
                 return reverse('home')
+        logout(self.request)
+        messages.add_message(self.request, messages.WARNING, 'Usuario inválido.')
         return reverse('login')
 
 
@@ -239,7 +243,7 @@ class UsuarioUpdateView(UpdateView, AdminMixin):
     context_object_name = 'usuario'
     pk_url_kwarg = 'usuario_id'
     success_url = reverse_lazy('usuario.list')
-    form_class = UsuarioForm
+    form_class = UsuarioChangeForm
 
 
 class UsuarioDeleteView(DeleteView, AdminMixin):
