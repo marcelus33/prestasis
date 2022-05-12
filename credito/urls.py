@@ -14,6 +14,8 @@ urlpatterns = [
     path('credito/desembolsados/', credito.views.CreditoDesembolsadoListView.as_view(),
          name='credito_desembolsados.list'),
     path('credito/rechazados/', credito.views.CreditoRechazadoListView.as_view(), name='credito_rechazados.list'),
+    path('credito/<int:credito_id>/desembolsar/', credito.views.CreditoDesembolsarView.as_view(),
+         name='credito.desembolsar'),
     # PAGOS
     path('pago/', credito.views.PagoListView.as_view(), name='pago.list'),
     path('pago/<int:pago_id>/', credito.views.PagoDetailView.as_view(), name='pago.detail'),
@@ -28,4 +30,5 @@ urlpatterns = [
     path('comision/<int:comision_id>/eliminar/', credito.views.ComisionDeleteView.as_view(), name='comision.delete'),
     # AJAX
     path('cliente/crear/', credito.views.ClienteCreateView.as_view(), name='cliente_ajax.create'),
+    path('credito/procesar/', credito.views.CreditoProcesarView.as_view(), name='credito_ajax.procesar'),
 ]

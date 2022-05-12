@@ -327,7 +327,6 @@ class ImportadorClienteView(FormView):
 
         return response
 
-
     def post(self, request, *args, **kwargs):
         response = {}
         if request.FILES.get('documento', False):
@@ -344,7 +343,3 @@ class ImportadorClienteView(FormView):
             return self.render_to_response(self.get_context_data(**response))
         return self.render_to_response(self.get_context_data())
 
-    def get_context_data(self, **kwargs):
-        context = super(ImportadorClienteView, self).get_context_data(**kwargs)
-        context['activo'] = 'organizacion'
-        return context

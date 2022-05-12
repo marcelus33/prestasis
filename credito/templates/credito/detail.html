@@ -1,26 +1,42 @@
 {% extends 'base.html' %}
+{% load humanize static %}
 {% block content %}
   <div class="row page-titles">
     <div class="col-md-5 col-12 align-self-center">
       <h3 class="text-themecolor">Solicitud</h3>
     </div>
     <div class="col-md-7 col-12 align-self-center d-none d-md-block">
-      <ol class="breadcrumb mb-0 p-0 bg-transparent float-right">.
+      <ol class="breadcrumb mb-0 p-0 bg-transparent float-right">
         <li class="breadcrumb-item"><a href="{% url 'credito.list' %}">Créditos</a></li>
         <li class="breadcrumb-item active">{{ credito }}</li>
       </ol>
     </div>
   </div>
-
-  <div class="button-group text-right mb-3">
+  <div class="d-flex flex-column flex-md-row justify-content-end justify-md-content-between align-items-md-center">
     {% if credito.esta_pendiente %}
-      <a href="#" class="btn waves-effect waves-light btn-success"><i class="bi bi-check"></i> Aprobar</a>
-      <a href="#" class="btn waves-effect waves-light btn-warning"><i class="bi bi-x"></i> Rechazar</a>
-    {% elif credito.fue_aprobado %}
-      <a href="#" class="btn waves-effect waves-light btn-success"><i class="bi bi-check"></i> Desembolsar</a>
+      <button id="btn-aprobar" type="button" class="btn waves-effect waves-light btn-success mr-2 mb-2">
+        <i class="bi bi-check"></i> Aprobar
+      </button>
+      <button id="btn-rechazar" type="button" class="btn waves-effect waves-light btn-warning mr-2 mb-2">
+        <i class="bi bi-x"></i> Rechazar
+      </button>
+    {% elif credito.fue_aprobado and not credito.fue_desembolsado %}
+      <a id="#btn-desembolsar" href="{% url "credito.desembolsar" credito.id %}"
+         class="btn waves-effect waves-light btn-success mr-2 mb-2">
+        <i class="bi bi-check"></i> Desembolsar
+      </a>
+    {% elif credito.fue_desembolsado %}
+      <a id="#btn-cuotas" href="#"
+         class="btn waves-effect waves-light btn-info mr-2 mb-2">
+        <i class="bi bi-file-spreadsheet"></i> Ver cuotas
+      </a>
     {% endif %}
-    <a href="{% url 'credito.update' credito.id %}" class="btn waves-effect waves-light btn-primary">Editar</a>
-    <a href="{% url 'credito.delete' credito.id %}" class="btn waves-effect waves-light btn-danger">Eliminar</a>
+    <a href="{% url 'credito.update' credito.id %}" class="btn waves-effect waves-light btn-primary mr-2 mb-2">
+      <i class="bi bi-pencil"></i> Editar
+    </a>
+    <a href="{% url 'credito.delete' credito.id %}" class="btn waves-effect waves-light btn-danger mr-2 mb-2">
+      <i class="bi bi-trash"></i> Eliminar
+    </a>
   </div>
 
   <div class="row">
@@ -30,13 +46,125 @@
           <table class="table table-bordered table-striped">
             <tbody>
             <tr>
-              <td style="width: 400px;">Cliente:</td>
-              <td>{{ credito.credito.nombre }}</td>
+              <td>Solicitado el:</td>
+              <td>{{ credito.fecha_alta }}</td>
             </tr>
+            <tr>
+              <td>Detalle:</td>
+              <td>{{ credito.cuotero }}</td>
+            </tr>
+            <tr>
+              <td>Cliente:</td>
+              <td>{{ credito.cliente }}</td>
+            </tr>
+            <tr>
+              <td>Documento:</td>
+              <td>
+                {% if credito.cliente.tipo_documento %}
+                  {{ credito.cliente.tipo_documento }}
+                  - {% endif %}{{ credito.cliente.ci|intcomma }}</td>
+            </tr>
+            <tr>
+              <td>Dirección y teléfono:</td>
+              <td>
+                {% if credito.cliente.direccion %}
+                  {{ credito.cliente.direccion }}
+                {% endif %}
+                {% if credito.cliente.telefono %}
+                  - {{ credito.cliente.telefono }}
+                {% endif %}
+              </td>
+            </tr>
+            <tr>
+              <td>Agente:</td>
+              <td>{{ credito.vendedor }}</td>
+            </tr>
+
+
+            <tr>
+              <td>Estado:</td>
+              <td>{{ credito.get_estado_display }}</td>
+            </tr>
+            {% if credito.fecha_aprobacion %}
+              <tr>
+                <td>{% if credito.estado == 2 or credito.estado == 4 %}Aprobado{% elif credito.estado == 3 %}
+                  Rechazado{% endif %} el:
+                </td>
+                <td>{{ credito.fecha_aprobacion|default:"Pendiente" }}</td>
+              </tr>
+            {% endif %}
+            {% if  credito.comentario %}
+              <tr>
+                <td>Comentarios:</td>
+                <td>{{ credito.comentario|default:"" }}</td>
+              </tr>
+            {% endif %}
+            {% if credito.fecha_desembolso %}
+              <tr>
+                <td>Desembolsado el:</td>
+                <td>{{ credito.fecha_desembolso|default:"" }}</td>
+              </tr>
+            {% endif %}
             </tbody>
           </table>
         </div>
       </div>
     </div>
   </div>
+  {% if credito.cuotas.count %}
+    <div class="row mt-3">
+      <div class="col-12">
+        <div class="card">
+        <div class="card-header">
+          <h3>Cuotas</h3>
+        </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-striped table-bordered">
+                <thead>
+                <tr>
+                  <th>No</th>
+                  <th>Vencimiento</th>
+                  <th>Monto</th>
+                  <th>Pagos</th>
+                  <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for cuota in credito.cuotas.all %}
+                  <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ cuota.fecha_vencimiento|date:"d/m/Y" }}</td>
+                    <td>{{ cuota.monto|intcomma }}</td>
+                    <td>
+                      {% if cuota.pagos.count %}
+                        <ul>
+                          {% for pago in cuota.pagos.all %}
+                            <li>{{ pago.fecha }} - {{ pago.monto }}</li>
+                          {% endfor %}
+                        </ul>
+                      {% else %}
+                        <p>Sin pagos.</p>
+                      {% endif %}
+                    </td>
+                    <td></td>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}
+
+{% block extra-js %}
+  <script type="text/javascript">
+    var csrfmiddlewaretoken = "{{ csrf_token }}";
+    var creditoId = "{{ credito.id }}";
+    var urlProcesarCredito = "{% url "credito_ajax.procesar" %}";
+  </script>
+  <script src="{% static "js/credito_detail.js" %}"></script>
 {% endblock %}

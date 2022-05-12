@@ -1,13 +1,44 @@
+import datetime
+
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import JsonResponse
+from django.core.exceptions import ValidationError
+from django.http import JsonResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
+from django.views import View
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from base.forms import ClienteForm
 from base.mixins import AdminMixin
 from base.models import Cliente
-from credito.forms import CreditoForm, CreditoVendedorForm, PagoForm, ComisionForm, ClienteModalForm
+from credito.forms import CreditoForm, CreditoVendedorForm, PagoForm, ComisionForm, ClienteModalForm, \
+    CreditoDesembolsarForm
+from credito.helpers import crear_cuotas
 from credito.models import Credito, Pago, Comision
+
+
+class CreditoProcesarView(View):
+
+    def post(self, request):
+        codigo = int(request.POST.get('codigo'))
+        credito_id = int(request.POST.get('creditoId'))
+        credito = Credito.objects.get(pk=credito_id)
+        data = {"success": True}
+        if credito and not credito.esta_procesado():
+            if codigo == 1:
+                credito.estado = Credito.APROBADO
+                credito.fecha_aprobacion = datetime.datetime.now()
+                credito.save()
+            elif codigo == 2:
+                credito.estado = Credito.RECHAZADO
+                credito.fecha_aprobacion = datetime.datetime.now()
+                credito.save()
+            else:
+                data = {"success": False}
+        else:
+            data = {"success": False}
+        return JsonResponse(data)
 
 
 class ClienteCreateView(LoginRequiredMixin, CreateView):
@@ -148,6 +179,37 @@ class CreditoRechazadoListView(CreditoListView):
         context = super(CreditoListView, self).get_context_data(**kwargs)
         context["activo"] = "rechazados"
         return context
+
+
+class CreditoDesembolsarView(UpdateView):
+    template_name = 'credito/update.html'
+    model = Credito
+    context_object_name = 'credito'
+    pk_url_kwarg = 'credito_id'
+    form_class = CreditoDesembolsarForm
+
+    def dispatch(self, request, *args, **kwargs):
+        credito_id = kwargs.get('credito_id', 0)
+        credito = get_object_or_404(Credito, pk=credito_id)
+        if credito.estado != Credito.APROBADO:
+            messages.add_message(request, messages.WARNING, 'La Solicitud no está aprobada.')
+            return HttpResponseRedirect(reverse('credito.detail', kwargs={'credito_id': credito_id}))
+        return super(CreditoDesembolsarView, self).dispatch(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse('credito.detail', kwargs={'credito_id': self.object.id})
+
+    def form_valid(self, form):
+        credito = form.save(commit=False)
+        credito.estado = Credito.DESEMBOLSADO
+        creado = crear_cuotas(credito)
+        if creado:
+            credito.save()
+            # TODO crear registro de CAJA por desembolso
+        else:
+            messages.add_message(self.request, messages.WARNING, 'No se pudieron crear las cuotas.')
+            return super().form_invalid(form)
+        return super().form_valid(form)
 
 
 # PAGOS
