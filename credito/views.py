@@ -10,7 +10,7 @@ from django.views import View
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from base.forms import ClienteForm
-from base.mixins import AdminMixin
+from base.mixins import AdminMixin, VendedorCreditoMixin, VendedorCreditoEditarMixin
 from base.models import Cliente
 from credito.forms import CreditoForm, CreditoVendedorForm, PagoForm, ComisionForm, ClienteModalForm, \
     CreditoDesembolsarForm
@@ -73,13 +73,6 @@ class CreditoListView(ListView):
         return context
 
 
-class CreditoDetailView(DetailView):
-    template_name = 'credito/detail.html'
-    model = Credito
-    context_object_name = 'credito'
-    pk_url_kwarg = 'credito_id'
-
-
 class CreditoCreateView(CreateView):
     template_name = 'credito/create.html'
     model = Credito
@@ -98,7 +91,7 @@ class CreditoCreateView(CreateView):
         return CreditoForm
 
 
-class CreditoUpdateView(UpdateView):
+class CreditoUpdateView(UpdateView, VendedorCreditoEditarMixin):
     template_name = 'credito/update.html'
     model = Credito
     context_object_name = 'credito'
@@ -107,6 +100,13 @@ class CreditoUpdateView(UpdateView):
 
     def get_success_url(self):
         return reverse('credito.detail', kwargs={'credito_id': self.object.id})
+
+
+class CreditoDetailView(DetailView, VendedorCreditoMixin):
+    template_name = 'credito/detail.html'
+    model = Credito
+    context_object_name = 'credito'
+    pk_url_kwarg = 'credito_id'
 
 
 class CreditoDeleteView(DeleteView, AdminMixin):

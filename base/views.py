@@ -177,27 +177,27 @@ class VendedorDeleteView(DeleteView, AdminMixin):
 
 
 # CLIENTE
-class ClienteListView(LoginRequiredMixin, ListView):
+class ClienteListView(AdminMixin, ListView):
     template_name = 'cliente/list.html'
     model = Cliente
     context_object_name = "clientes"
 
 
-class ClienteDetailView(LoginRequiredMixin, DetailView):
+class ClienteDetailView(AdminMixin, DetailView):
     template_name = 'cliente/detail.html'
     model = Cliente
     context_object_name = 'cliente'
     pk_url_kwarg = 'cliente_id'
 
 
-class ClienteCreateView(LoginRequiredMixin, CreateView):
+class ClienteCreateView(AdminMixin, CreateView):
     template_name = 'cliente/create.html'
     model = Cliente
     success_url = reverse_lazy('cliente.list')
     form_class = ClienteForm
 
 
-class ClienteUpdateView(LoginRequiredMixin, UpdateView):
+class ClienteUpdateView(AdminMixin, UpdateView):
     template_name = 'cliente/update.html'
     model = Cliente
     context_object_name = 'cliente'

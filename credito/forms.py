@@ -3,6 +3,7 @@ import datetime
 import django.forms as forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Button
+from django.core.validators import RegexValidator
 from django.utils import timezone
 
 from base.models import Vendedor, Cliente
@@ -13,10 +14,14 @@ class CreditoForm(forms.ModelForm):
 
     class Meta:
         model = Credito
-        fields = ['cliente', 'cuotero', 'vendedor']
+        fields = ['fecha_alta', 'cliente', 'cuotero', 'vendedor']
 
     def __init__(self, user=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['fecha_alta'].widget.attrs.update({
+            'class': 'datepicker form-control',
+            'autocomplete': 'off'
+        })
         self.helper = FormHelper()
         self.helper.add_input(Submit('submit', 'Guardar', css_class='btn-primary'))
 
@@ -95,6 +100,8 @@ class ComisionForm(forms.ModelForm):
 
 
 class ClienteModalForm(forms.ModelForm):
+    ci = forms.CharField(max_length=16,
+                         validators=[RegexValidator("^[0-9]*$", message="Sólo puede ingresar números.")])
 
     class Meta:
         model = Cliente
@@ -102,5 +109,10 @@ class ClienteModalForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['fecha_nacimiento'].widget.attrs.update({
+            'class': 'datepicker form-control',
+            'autocomplete': 'off'
+        })
+        self.fields['fecha_nacimiento'].help_text = "Formato: dd/mm/YYYY"
         self.helper = FormHelper()
         self.helper.add_input(Button('button', 'Guardar', css_class='btn-primary'))
