@@ -19,6 +19,7 @@ class Cuotero(models.Model):
     pagare = models.PositiveIntegerField(verbose_name="Pagaré")
 
     class Meta:
+        unique_together = [['monto', 'cuotas', 'tipo_plazo']]
         ordering = ['monto', 'pagare']
         verbose_name = "Cuotero"
         verbose_name_plural = "Cuotas"
@@ -88,6 +89,7 @@ class Cliente(models.Model):
     ci = models.CharField(max_length=16, blank=True, null=True)
     direccion = models.CharField(max_length=128, blank=True, null=True)
     telefono = models.CharField(max_length=128, blank=True, null=True)
+    fecha_nacimiento = models.DateField(null=True, blank=True)
 
     class Meta:
         unique_together = [['tipo_documento', 'ci']]

@@ -27,7 +27,7 @@ $(document).ready(function () {
         error: function (e) {
           alert("Error de servidor, favor intente más tarde.")
         }
-      })
+      });
     });
   }
 });

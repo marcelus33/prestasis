@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load humanize %}
 {% block content %}
   <div class="row page-titles">
     <div class="col-md-5 col-12 align-self-center">
@@ -24,8 +25,24 @@
           <table class="table table-bordered table-striped">
             <tbody>
             <tr>
-              <td style="width: 400px;">Nombre completo:</td>
+              <td style="width: 400px;">Nombre:</td>
               <td>{{ cliente.nombre }}</td>
+            </tr>
+            <tr>
+              <td style="width: 400px;">Documento:</td>
+              <td>{{ cliente.tipo_documento }} - {{ cliente.ci|intcomma }}</td>
+            </tr>
+            <tr>
+              <td style="width: 400px;">Dirección:</td>
+              <td>{{ cliente.direccion }}</td>
+            </tr>
+            <tr>
+              <td style="width: 400px;">Teléfono:</td>
+              <td>{{ cliente.telefono }}</td>
+            </tr>
+            <tr>
+              <td style="width: 400px;">Fecha de nacimiento:</td>
+              <td>{{ cliente.fecha_nacimiento }}</td>
             </tr>
             </tbody>
           </table>

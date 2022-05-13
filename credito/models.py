@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 from base.models import Cliente, Vendedor, Cuotero
 
@@ -19,7 +20,7 @@ class Credito(models.Model):
     cuotero = models.ForeignKey(Cuotero, related_name="creditos", on_delete=models.PROTECT)
     estado = models.IntegerField(choices=ESTADOS_CREDITO, default=PENDIENTE)
     comentario = models.CharField(max_length=128, blank=True, null=True)
-    fecha_alta = models.DateField(auto_now=True)
+    fecha_alta = models.DateField(default=timezone.now())
     fecha_aprobacion = models.DateField(verbose_name="Fecha de aprobación/rechazo", null=True, blank=True)
     fecha_desembolso = models.DateField(verbose_name="Fecha de desembolso", null=True, blank=True)
 

@@ -5,11 +5,16 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
 
+from base.helpers import parse_string_number
 from base.models import Cuotero, ComisionMora, Cliente, Vendedor, Usuario, TipoDocumento
 
 
 class CuoteroForm(forms.ModelForm):
-    monto_cuota = forms.IntegerField(required=False, disabled=True)
+    monto = forms.CharField(max_length=24,
+                            validators=[RegexValidator("^\d+(\.\d+)*$", message="Sólo puede ingresar números.")])
+    pagare = forms.CharField(max_length=24,
+                             validators=[RegexValidator("^\d+(\.\d+)*$", message="Sólo puede ingresar números.")])
+    monto_cuota = forms.CharField(max_length=24, required=False)  # , disabled=True
 
     SEMANAL = 7
     QUINCENAL = 14
@@ -19,7 +24,6 @@ class CuoteroForm(forms.ModelForm):
         (QUINCENAL, "Quincenal"),
         (MENSUAL, "Mensual"),
     )
-    # field_order = ['monto', 'cuotas', 'monto_cuota', 'tipo_plazo', 'pagare']
 
     class Meta:
         model = Cuotero
@@ -28,12 +32,33 @@ class CuoteroForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['tipo_plazo'] = forms.ChoiceField(choices=self.TIPOS_PLAZOS)
+        for field in ['monto', 'pagare', 'monto_cuota']:
+            self.fields[field].widget.attrs.update({
+                'class': 'auto-numeric form-control',
+            })
+        self.fields['monto_cuota'].widget.attrs['readonly'] = True
         self.helper = FormHelper()
         self.helper.add_input(Submit('submit', 'Guardar', css_class='btn-primary'))
 
+    def clean_monto(self):
+        monto = self.cleaned_data['monto']
+        return parse_string_number(monto)
+
+    def clean_pagare(self):
+        pagare = self.cleaned_data['pagare']
+        return parse_string_number(pagare)
+
+    def clean(self):
+        data = self.cleaned_data
+        monto = data.get("monto")
+        pagare = data.get("pagare")
+
+        if monto > pagare:
+            self.add_error("pagare", "Monto del Pagaré no puede ser menor al préstamo.")
+        return data
+
 
 class ComisionMoraForm(forms.ModelForm):
-
     class Meta:
         model = ComisionMora
         fields = '__all__'
@@ -45,7 +70,6 @@ class ComisionMoraForm(forms.ModelForm):
 
 
 class VendedorForm(forms.ModelForm):
-
     class Meta:
         model = Vendedor
         fields = '__all__'
@@ -65,7 +89,6 @@ class VendedorForm(forms.ModelForm):
 
 
 class TipoDocumentoForm(forms.ModelForm):
-
     class Meta:
         model = TipoDocumento
         fields = '__all__'
@@ -86,12 +109,15 @@ class ClienteForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['fecha_nacimiento'].widget.attrs.update({
+            'class': 'datepicker form-control',
+            'autocomplete': 'off'
+        })
         self.helper = FormHelper()
         self.helper.add_input(Submit('submit', 'Guardar', css_class='btn-primary'))
 
 
 class UsuarioForm(UserCreationForm):
-
     class Meta:
         model = User
         fields = ['username', 'first_name', 'last_name', 'email', 'groups', 'is_active', 'is_superuser']
@@ -103,7 +129,6 @@ class UsuarioForm(UserCreationForm):
 
 
 class UsuarioChangeForm(UserChangeForm):
-
     class Meta:
         model = User
         fields = ['username', 'first_name', 'last_name', 'email', 'groups', 'is_active', 'is_superuser']
@@ -121,4 +146,3 @@ class ImportadorClienteForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(Submit('submit', 'Importar', css_class='btn-primary'))
-
