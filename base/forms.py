@@ -4,6 +4,7 @@ from crispy_forms.layout import Submit
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
+from django.db.models import Q
 
 from base.helpers import parse_string_number
 from base.models import Cuotero, ComisionMora, Cliente, Vendedor, Usuario, TipoDocumento
@@ -77,7 +78,10 @@ class VendedorForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # solo usuarios que no tengan vendedores asociados
-        self.fields['usuario'].queryset = Usuario.objects.filter(vendedor__isnull=True, is_superuser=False).all()
+        query = Q(vendedor__isnull=True, is_superuser=False)
+        if self.instance.id:
+            query = Q(vendedor__isnull=True, is_superuser=False) | Q(vendedor=self.instance)
+        self.fields['usuario'].queryset = Usuario.objects.filter(query).all()
         self.helper = FormHelper()
         self.helper.add_input(Submit('submit', 'Guardar', css_class='btn-primary'))
 

@@ -24,6 +24,10 @@ class CreditoForm(forms.ModelForm):
             'class': 'datepicker form-control',
             'autocomplete': 'off'
         })
+        if self.instance.id:
+            cliente = self.instance.cliente
+            cliente_initial = "{} - {}".format(cliente.nombre, cliente.ci)
+            self.fields['cliente_search'].initial = cliente_initial
         self.fields['vendedor'].label = "Oficial"
         self.helper = FormHelper()
         self.helper.add_input(Submit('submit', 'Guardar', css_class='btn-primary'))
