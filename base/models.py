@@ -19,7 +19,7 @@ class Cuotero(models.Model):
     pagare = models.PositiveIntegerField(verbose_name="Pagaré")
 
     class Meta:
-        unique_together = [['monto', 'cuotas', 'tipo_plazo']]
+        unique_together = [['monto', 'cuotas', 'tipo_plazo', 'pagare']]
         ordering = ['monto', 'pagare']
         verbose_name = "Cuotero"
         verbose_name_plural = "Cuotas"
