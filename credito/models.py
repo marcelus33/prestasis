@@ -16,7 +16,7 @@ class Credito(models.Model):
         (DESEMBOLSADO, "Desembolsado"),
     )
     cliente = models.ForeignKey(Cliente, related_name="creditos", on_delete=models.PROTECT)
-    vendedor = models.ForeignKey(Vendedor, related_name="creditos", on_delete=models.PROTECT)
+    vendedor = models.ForeignKey(Vendedor, verbose_name="Oficial", related_name="creditos", on_delete=models.PROTECT)
     cuotero = models.ForeignKey(Cuotero, related_name="creditos", on_delete=models.PROTECT)
     estado = models.IntegerField(choices=ESTADOS_CREDITO, default=PENDIENTE)
     comentario = models.CharField(max_length=128, blank=True, null=True)
@@ -29,7 +29,7 @@ class Credito(models.Model):
         verbose_name_plural = "Créditos"
 
     def __str__(self):
-        return "{}/{}".format(self.cuotero.monto, self.cuotero.pagare)
+        return "Crédito #{}".format(self.id)
 
     def esta_procesado(self):
         return self.estado > self.PENDIENTE

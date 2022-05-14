@@ -32,6 +32,7 @@
         <table class="datatable table table-sm table-striped table-bordered ">
           <thead>
           <tr>
+            <th>No.</th>
             <th>Cliente</th>
             <th>Vendedor</th>
             <th>Pagaré</th>
@@ -42,6 +43,7 @@
           <tbody>
           {% for credito in creditos %}
             <tr>
+              <td>{{ credito.id }}</td>
               <td>{{ credito.cliente.nombre }}</td>
               <td>{{ credito.vendedor.nombre }}</td>
               <td>{{ credito.cuotero.pagare|intcomma }}</td>

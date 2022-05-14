@@ -1,4 +1,26 @@
 $(document).ready(function () {
+  var clienteSelect = $("#id_cliente");
+  $("#id_cliente_search").autocomplete({
+    source: function (request, response) {
+      $.ajax({
+        url: clienteSearchUrl,
+        data: {
+          term: request.term
+        },
+        success: function (data) {
+          response(data);
+        },
+        error: function (jqXHR, exception) {
+          console.error(exception);
+        }
+      });
+    },
+    minLength: 5,
+    select: function (event, ui) {
+      clienteSelect.val(ui.item.id);
+    }
+  });
+  //
   var modal = $('#modal-cliente');
   //
   $('#add-cliente').click(function () {
