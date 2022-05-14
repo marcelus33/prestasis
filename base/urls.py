@@ -52,5 +52,7 @@ urlpatterns = [
          name='tipo_documento.update'),
     path('tipo-documento/<int:tipo_documento_id>/eliminar/', base.views.TipoDocumentoDeleteView.as_view(),
          name='tipo_documento.delete'),
+    # AJAX
+    path('cliente/search/', base.views.ClienteAjaxSearchView.as_view(), name='cliente.ajax_search'),
 
 ]

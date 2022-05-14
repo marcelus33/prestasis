@@ -11,10 +11,12 @@ from credito.models import Credito, Pago, Comision
 
 
 class CreditoForm(forms.ModelForm):
+    cliente_search = forms.CharField(label="Cliente", max_length=128, required=True)
+    cliente = forms.ModelChoiceField(queryset=Cliente.objects.all(), widget=forms.HiddenInput)
 
     class Meta:
         model = Credito
-        fields = ['fecha_alta', 'cliente', 'cuotero', 'vendedor']
+        fields = ['fecha_alta', 'cliente', 'cliente_search', 'cuotero', 'vendedor']
 
     def __init__(self, user=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -22,21 +24,25 @@ class CreditoForm(forms.ModelForm):
             'class': 'datepicker form-control',
             'autocomplete': 'off'
         })
+        self.fields['vendedor'].label = "Oficial"
         self.helper = FormHelper()
         self.helper.add_input(Submit('submit', 'Guardar', css_class='btn-primary'))
 
 
 class CreditoVendedorForm(forms.ModelForm):
+    cliente_search = forms.CharField(label="Cliente", max_length=128, required=True)
+    cliente = forms.ModelChoiceField(queryset=Cliente.objects.all(), widget=forms.HiddenInput)
 
     class Meta:
         model = Credito
-        fields = ['cliente', 'cuotero', 'vendedor']
+        fields = ['cliente', 'cliente_search', 'cuotero', 'vendedor']
 
     def __init__(self, user=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         queryset = Vendedor.objects.filter(usuario=user)
         self.fields['vendedor'].queryset = queryset
         self.fields['vendedor'].initial = queryset.first()
+        self.fields['vendedor'].label = "Oficial"
         self.helper = FormHelper()
         self.helper.add_input(Submit('submit', 'Guardar', css_class='btn-primary'))
         self.helper.add_input(

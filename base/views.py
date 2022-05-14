@@ -1,3 +1,4 @@
+import json
 from io import BytesIO
 
 from django.contrib import messages
@@ -7,8 +8,10 @@ from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
-from django.http import HttpResponseNotFound
+from django.db.models import Q
+from django.http import HttpResponseNotFound, JsonResponse, HttpResponse
 from django.urls import reverse, reverse_lazy
+from django.views import View
 from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView, FormView
 from openpyxl import load_workbook
 
@@ -346,4 +349,20 @@ class ImportadorClienteView(FormView):
                 }
             return self.render_to_response(self.get_context_data(**response))
         return self.render_to_response(self.get_context_data())
+
+
+class ClienteAjaxSearchView(View):
+
+    def get(self, request):
+        term = request.GET.get("term")
+        results = []
+        query = Q(nombre__icontains=term) | Q(ci__icontains=term)
+        clientes = Cliente.objects.filter(query)
+        for cliente in clientes:
+            label = "{} - CI: {}".format(cliente.nombre, cliente.ci)
+            results.append({"label": label, "value": label, "id": cliente.id})
+        return HttpResponse(json.dumps(results), content_type="application/json")
+
+
+
 
