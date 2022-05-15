@@ -43,7 +43,7 @@
           <tbody>
           {% for credito in creditos %}
             <tr>
-              <td>{{ credito.id }}</td>
+              <td>{{ credito.numero|default:"-" }}</td>
               <td>{{ credito.cliente.nombre }}</td>
               <td>{{ credito.vendedor.nombre }}</td>
               <td>{{ credito.cuotero.pagare|intcomma }}</td>

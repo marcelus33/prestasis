@@ -30,7 +30,7 @@ class MovimientoCaja(models.Model):
     concepto = models.ForeignKey(ConceptoMovimiento, related_name="movimientos", on_delete=models.PROTECT, null=True,
                                  blank=False)
     monto = models.PositiveIntegerField()
-    saldo = models.IntegerField()
+    saldo = models.IntegerField(null=True, blank=True)
 
     class Meta:
         ordering = ('fecha',)
