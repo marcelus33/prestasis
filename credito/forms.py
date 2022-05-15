@@ -16,7 +16,7 @@ class CreditoForm(forms.ModelForm):
 
     class Meta:
         model = Credito
-        fields = ['fecha_alta', 'cliente', 'cliente_search', 'cuotero', 'vendedor']
+        fields = ['fecha_alta', 'numero', 'cliente', 'cliente_search', 'cuotero', 'vendedor']
 
     def __init__(self, user=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -28,6 +28,9 @@ class CreditoForm(forms.ModelForm):
             cliente = self.instance.cliente
             cliente_initial = "{} - {}".format(cliente.nombre, cliente.ci)
             self.fields['cliente_search'].initial = cliente_initial
+        else:
+            last_id = Credito.objects.all().last().id
+            self.fields['numero'].initial = last_id + 1
         self.fields['vendedor'].label = "Oficial"
         self.helper = FormHelper()
         self.helper.add_input(Submit('submit', 'Guardar', css_class='btn-primary'))

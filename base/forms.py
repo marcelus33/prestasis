@@ -88,7 +88,7 @@ class VendedorForm(forms.ModelForm):
     def clean_usuario(self):
         # por haber cambiado el queryset en el init
         usuario = self.cleaned_data['usuario']
-        usuario = usuario.id
+        usuario = usuario.id if usuario else None
         return usuario
 
 

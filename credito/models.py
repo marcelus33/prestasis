@@ -15,6 +15,7 @@ class Credito(models.Model):
         (RECHAZADO, "Rechazado"),
         (DESEMBOLSADO, "Desembolsado"),
     )
+    numero = models.PositiveIntegerField(verbose_name="Número solicitud", unique=True, blank=False, null=True)
     cliente = models.ForeignKey(Cliente, related_name="creditos", on_delete=models.PROTECT)
     vendedor = models.ForeignKey(Vendedor, verbose_name="Oficial", related_name="creditos", on_delete=models.PROTECT)
     cuotero = models.ForeignKey(Cuotero, related_name="creditos", on_delete=models.PROTECT)

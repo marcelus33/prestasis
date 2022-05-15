@@ -27,8 +27,9 @@ class Cuotero(models.Model):
     def __str__(self):
         monto = "{:,}".format(self.monto).replace(",", ".")
         pagare = "{:,}".format(self.pagare).replace(",", ".")
-        return "Monto: Gs.{} - Cuotas: {} - {} - Pagaré: {}".format(monto, self.cuotas, self.get_tipo_plazo_display(),
-                                                                    pagare)
+        monto_cuota = "{:,}".format(self.get_monto_cuota()).replace(",", ".")
+        return "Monto: Gs.{} - Cuotas: {} de Gs.{} - {} - Pagaré: {}".format(monto, self.cuotas, monto_cuota,
+                                                                             self.get_tipo_plazo_display(), pagare)
 
     def get_interes(self):
         return self.pagare - self.monto
