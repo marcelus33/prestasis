@@ -16,3 +16,10 @@
     </div>
   </div>
 {% endblock %}
+
+{% block extra-js %}
+  <script type="application/javascript">
+    var clienteSearchUrl = "{% url "cliente.ajax_search" %}";
+  </script>
+  <script src="{% static "js/pago_form.js" %}"></script>
+{% endblock %}

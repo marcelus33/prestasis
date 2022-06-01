@@ -32,6 +32,10 @@ class Credito(models.Model):
     def __str__(self):
         return "Crédito #{}".format(self.id)
 
+    @property
+    def monto(self):
+        return self.cuotero.monto
+
     def esta_procesado(self):
         return self.estado > self.PENDIENTE
 
@@ -55,8 +59,13 @@ class Cuota(models.Model):
         verbose_name = "Cuota"
         verbose_name_plural = "Cuotas"
 
+    def __str__(self):
+        fecha_vencimiento = self.fecha_vencimiento.strftime("%d/%m/%y")
+        monto = "{:,}".format(self.monto).replace(",", ".")
+        credito_id = self.credito.numero if self.credito.numero else self.credito.id
+        return "#{}: {} - {} - {}".format(credito_id, self.get_numero_cuota(), fecha_vencimiento, monto)
+
     def get_numero_cuota(self):
-        # TODO: revisar si funciona
         cuotas = Cuota.objects.filter(credito=self.credito).order_by("fecha_vencimiento")
         cuotas = list(cuotas.values_list("fecha_vencimiento", flat=True))
         idx = cuotas.index(self.fecha_vencimiento)

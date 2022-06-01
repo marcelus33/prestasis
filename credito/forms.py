@@ -4,10 +4,9 @@ import django.forms as forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Button
 from django.core.validators import RegexValidator
-from django.utils import timezone
 
 from base.models import Vendedor, Cliente
-from credito.models import Credito, Pago, Comision
+from credito.models import Credito, Pago, Comision, Cuota
 
 
 class CreditoForm(forms.ModelForm):
@@ -79,8 +78,9 @@ class CreditoDesembolsarForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = self.cleaned_data
-        fecha_desembolso = cleaned_data.get("fecha_desembolso")
-        fecha_aprobacion = self.save(commit=False).fecha_aprobacion
+        fecha_desembolso = self.data.get('fecha_desembolso')
+        fecha_desembolso = datetime.datetime.strptime(fecha_desembolso, "%d/%m/%Y").date()
+        fecha_aprobacion = self.instance.fecha_aprobacion
         if fecha_aprobacion > fecha_desembolso:
             msg = "La fecha de desembolso no puede ser menor a la fecha de aprobación ({}).".format(
                 fecha_aprobacion.strftime("%d/%m/%Y"))
@@ -89,13 +89,27 @@ class CreditoDesembolsarForm(forms.ModelForm):
 
 
 class PagoForm(forms.ModelForm):
+    cuota = forms.ModelChoiceField(queryset=Cuota.objects.none())
+    cliente_search = forms.CharField(label="Cliente", max_length=128, required=False)
+    monto = forms.CharField(max_length=24,
+                            validators=[RegexValidator("^\d+(\.\d+)*$", message="Sólo puede ingresar números.")])
 
     class Meta:
         model = Pago
         fields = '__all__'
 
+    field_order = ['cliente_search', 'fecha', 'cuota', 'monto']
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['fecha'].initial = datetime.datetime.now()
+        self.fields['fecha'].widget.attrs.update({
+            'class': 'datepicker form-control',
+            'autocomplete': 'off'
+        })
+        self.fields['monto'].widget.attrs.update({
+            'class': 'auto-numeric form-control',
+        })
         self.helper = FormHelper()
         self.helper.add_input(Submit('submit', 'Guardar', css_class='btn-primary'))
 
