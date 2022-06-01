@@ -14,7 +14,7 @@ from base.mixins import AdminMixin, VendedorCreditoMixin, VendedorCreditoEditarM
 from base.models import Cliente
 from credito.forms import CreditoForm, CreditoVendedorForm, PagoForm, ComisionForm, ClienteModalForm, \
     CreditoDesembolsarForm
-from credito.helpers import crear_cuotas
+from credito.helpers import crear_cuotas, crear_movimiento_desembolso
 from credito.models import Credito, Pago, Comision
 
 
@@ -205,7 +205,7 @@ class CreditoDesembolsarView(UpdateView):
         creado = crear_cuotas(credito)
         if creado:
             credito.save()
-            # TODO crear registro de CAJA por desembolso
+            crear_movimiento_desembolso(credito)
         else:
             messages.add_message(self.request, messages.WARNING, 'No se pudieron crear las cuotas.')
             return super().form_invalid(form)
