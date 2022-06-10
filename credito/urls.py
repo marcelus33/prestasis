@@ -31,4 +31,5 @@ urlpatterns = [
     # AJAX
     path('cliente/crear/', credito.views.ClienteCreateView.as_view(), name='cliente_ajax.create'),
     path('credito/procesar/', credito.views.CreditoProcesarView.as_view(), name='credito_ajax.procesar'),
+    path('cliente/cuotas/', credito.views.ClienteCuotasView.as_view(), name='cliente_ajax.get_cuotas'),
 ]

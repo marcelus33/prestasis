@@ -36,6 +36,9 @@ class Credito(models.Model):
     def monto(self):
         return self.cuotero.monto
 
+    def get_numero_or_id(self):
+        return "#{}".format(self.numero if self.numero else self.id)
+
     def esta_procesado(self):
         return self.estado > self.PENDIENTE
 
@@ -53,6 +56,7 @@ class Cuota(models.Model):
     credito = models.ForeignKey(Credito, related_name="cuotas", on_delete=models.CASCADE)
     fecha_vencimiento = models.DateField("Fecha de vencimiento")
     monto = models.PositiveIntegerField()
+    saldo = models.PositiveIntegerField(null=True, blank=True)
 
     class Meta:
         ordering = ('fecha_vencimiento',)
@@ -71,6 +75,10 @@ class Cuota(models.Model):
         idx = cuotas.index(self.fecha_vencimiento)
         return idx if idx else 0
 
+    def save(self, *args, **kwargs):
+        self.saldo = self.monto
+        super(Cuota, self).save(*args, **kwargs)
+
 
 class Pago(models.Model):
     cuota = models.ForeignKey(Cuota, related_name="pagos", on_delete=models.PROTECT)
@@ -85,6 +93,10 @@ class Pago(models.Model):
     def __str__(self):
         return "Pago cuota {}, crédito de {}".format(
             {self.cuota.get_numero_cuota(), self.cuota.credito.cliente.nombre})
+
+    def save(self, *args, **kwargs):
+        # TODO: generar movimiento de caja
+        super(Pago, self).save(*args, **kwargs)
 
 
 class Comision(models.Model):

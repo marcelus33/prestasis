@@ -30,6 +30,8 @@
 {% block extra-js %}
   <script type="application/javascript">
     var clienteSearchUrl = "{% url "cliente.ajax_search" %}";
+    var clienteCuotasUrl = "{% url "cliente_ajax.get_cuotas" %}";
+    var csrfToken = "{{ csrf_token }}";
   </script>
   <script src="{% static "js/pago_form.js" %}"></script>
 {% endblock %}

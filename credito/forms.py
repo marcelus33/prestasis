@@ -28,7 +28,8 @@ class CreditoForm(forms.ModelForm):
             cliente_initial = "{} - {}".format(cliente.nombre, cliente.ci)
             self.fields['cliente_search'].initial = cliente_initial
         else:
-            last_id = Credito.objects.all().last().id
+            last_credito = Credito.objects.all().last()
+            last_id = last_credito.id if last_credito else 0
             self.fields['numero'].initial = last_id + 1
         self.fields['vendedor'].label = "Oficial"
         self.helper = FormHelper()
@@ -102,6 +103,7 @@ class PagoForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['cuota'].queryset = Cuota.objects.all()
         self.fields['fecha'].initial = datetime.datetime.now()
         self.fields['fecha'].widget.attrs.update({
             'class': 'datepicker form-control',
@@ -112,6 +114,21 @@ class PagoForm(forms.ModelForm):
         })
         self.helper = FormHelper()
         self.helper.add_input(Submit('submit', 'Guardar', css_class='btn-primary'))
+
+    def clean_monto(self):
+        data = self.cleaned_data
+        monto = data.get("monto")
+        monto = int(monto.replace(".", ""))
+        return monto
+
+    def clean(self):
+        data = self.cleaned_data
+        monto = data.get("monto")
+        cuota_id = int(self.data.get('cuota'))
+        cuota = Cuota.objects.get(pk=cuota_id).monto
+        if monto > cuota:
+            self.add_error("monto", "Monto de pago no puede ser mayor a la cuota.")
+        return data
 
 
 class ComisionForm(forms.ModelForm):

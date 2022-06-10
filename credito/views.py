@@ -15,7 +15,7 @@ from base.models import Cliente
 from credito.forms import CreditoForm, CreditoVendedorForm, PagoForm, ComisionForm, ClienteModalForm, \
     CreditoDesembolsarForm
 from credito.helpers import crear_cuotas, crear_movimiento_desembolso
-from credito.models import Credito, Pago, Comision
+from credito.models import Credito, Pago, Comision, Cuota
 
 
 class CreditoProcesarView(View):
@@ -216,7 +216,7 @@ class CreditoDesembolsarView(UpdateView):
 class PagoListView(ListView, AdminMixin):
     template_name = 'pago/list.html'
     model = Pago
-    context_object_name = "comisiones_moras"
+    context_object_name = "pagos"
 
 
 class PagoDetailView(DetailView, AdminMixin):
@@ -291,4 +291,16 @@ class ComisionDeleteView(DeleteView, AdminMixin):
     pk_url_kwarg = 'comision_id'
     success_url = reverse_lazy('comision.list')
 
+
+class ClienteCuotasView(View):
+    def post(self, request):
+        cliente_id = int(request.POST.get('clienteId'))
+        data = []
+        cuotas = Cuota.objects.filter(credito__cliente_id=cliente_id, saldo__gt=0)
+        # cuotas = Cuota.objects.filter(credito__cliente_id=cliente_id, saldo__isnull=True)
+        for cuota in cuotas:
+            monto = "{:,}".format(cuota.monto).replace(",", ".")
+            data.append({"id": cuota.id, "monto": monto, "credito": cuota.credito.get_numero_or_id()})
+        response = {"success": True, "data": data}
+        return JsonResponse(response)
 
