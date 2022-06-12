@@ -2,20 +2,18 @@ import datetime
 
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.exceptions import ValidationError
 from django.http import JsonResponse, HttpResponseRedirect
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views import View
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
-from base.forms import ClienteForm
 from base.mixins import AdminMixin, VendedorCreditoMixin, VendedorCreditoEditarMixin
 from base.models import Cliente
 from credito.forms import CreditoForm, CreditoVendedorForm, PagoForm, ComisionForm, ClienteModalForm, \
     CreditoDesembolsarForm
-from credito.helpers import crear_cuotas, crear_movimiento_desembolso
-from credito.models import Credito, Pago, Comision
+from credito.helpers import crear_cuotas, crear_movimiento_desembolso, crear_movimiento_cobro
+from credito.models import Credito, Pago, Comision, Cuota
 
 
 class CreditoProcesarView(View):
@@ -216,7 +214,7 @@ class CreditoDesembolsarView(UpdateView):
 class PagoListView(ListView, AdminMixin):
     template_name = 'pago/list.html'
     model = Pago
-    context_object_name = "comisiones_moras"
+    context_object_name = "pagos"
 
 
 class PagoDetailView(DetailView, AdminMixin):
@@ -231,6 +229,18 @@ class PagoCreateView(CreateView, AdminMixin):
     model = Pago
     success_url = reverse_lazy('pago.list')
     form_class = PagoForm
+
+    def form_valid(self, form):
+        if form.is_valid():
+            pago_cuota = form.save()
+            # actualizamos campo Saldo en Cuota
+            cuota_id = pago_cuota.cuota.id
+            cuota_obj = Cuota.objects.get(pk=cuota_id)
+            cuota_obj.saldo = cuota_obj.saldo - pago_cuota.monto
+            cuota_obj.save()
+            # creamos Movimiento de Caja
+            crear_movimiento_cobro(pago_cuota)
+        return super(PagoCreateView, self).form_valid(form)
 
 
 class PagoUpdateView(UpdateView, AdminMixin):
@@ -292,3 +302,14 @@ class ComisionDeleteView(DeleteView, AdminMixin):
     success_url = reverse_lazy('comision.list')
 
 
+class ClienteCuotasView(View):
+    def post(self, request):
+        cliente_id = int(request.POST.get('clienteId'))
+        data = []
+        cuotas = Cuota.objects.filter(credito__cliente_id=cliente_id, saldo__gt=0)
+        for cuota in cuotas:
+            monto = "{:,}".format(cuota.saldo).replace(",", ".")
+            data.append(
+                {"id": cuota.id, "monto": monto, "credito": cuota.credito.get_numero_or_id(), "label": str(cuota)})
+        response = {"success": True, "data": data}
+        return JsonResponse(response)

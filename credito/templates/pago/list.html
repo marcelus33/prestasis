@@ -26,18 +26,18 @@
         <table class="datatable table table-sm table-striped table-bordered ">
           <thead>
           <tr>
-            <th>Nombre</th>
-            <th>CI</th>
-            <th>Telefono</th>
+            <th>Cliente</th>
+            <th>Cuota</th>
+            <th>Monto pago</th>
             <th>Acciones</th>
           </tr>
           </thead>
           <tbody>
           {% for pago in pagos %}
             <tr>
-              <td>{{ pago.nombre }}</td>
-              <td>{{ pago.ci }}</td>
-              <td>{{ pago.telefono }}</td>
+              <td>{{ pago.cuota.credito.cliente.nombre }} - {{ pago.cuota.credito.cliente.ci|intcomma }}</td>
+              <td>{{ pago.cuota }}</td>
+              <td>{{ pago.monto|intcomma }}</td>
               <td>
                 <a href="{% url "pago.update" pago.id %}" class="btn btn-info">
                   <i class="bi bi-pencil"></i>
