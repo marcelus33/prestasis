@@ -25,11 +25,6 @@
          class="btn waves-effect waves-light btn-success mr-2 mb-2">
         <i class="bi bi-check"></i> Desembolsar
       </a>
-    {% elif credito.fue_desembolsado %}
-      <a id="#btn-cuotas" href="#"
-         class="btn waves-effect waves-light btn-info mr-2 mb-2">
-        <i class="bi bi-file-spreadsheet"></i> Ver cuotas
-      </a>
     {% endif %}
     <a href="{% url 'credito.update' credito.id %}" class="btn waves-effect waves-light btn-primary mr-2 mb-2">
       <i class="bi bi-pencil"></i> Editar
@@ -126,6 +121,7 @@
                   <th>No</th>
                   <th>Vencimiento</th>
                   <th>Monto</th>
+                  <th>Saldo</th>
                   <th>Pagos</th>
                   <th></th>
                 </tr>
@@ -136,11 +132,12 @@
                     <td>{{ forloop.counter }}</td>
                     <td>{{ cuota.fecha_vencimiento|date:"d/m/Y" }}</td>
                     <td>{{ cuota.monto|intcomma }}</td>
+                    <td>{{ cuota.saldo|intcomma }}</td>
                     <td>
                       {% if cuota.pagos.count %}
                         <ul>
                           {% for pago in cuota.pagos.all %}
-                            <li>{{ pago.fecha }} - {{ pago.monto }}</li>
+                            <li>{{ pago.fecha|date:"d/m/Y" }} - {{ pago.monto|intcomma }}</li>
                           {% endfor %}
                         </ul>
                       {% else %}

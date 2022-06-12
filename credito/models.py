@@ -15,15 +15,21 @@ class Credito(models.Model):
         (RECHAZADO, "Rechazado"),
         (DESEMBOLSADO, "Desembolsado"),
     )
-    numero = models.PositiveIntegerField(verbose_name="Número solicitud", unique=True, blank=False, null=True)
-    cliente = models.ForeignKey(Cliente, related_name="creditos", on_delete=models.PROTECT)
-    vendedor = models.ForeignKey(Vendedor, verbose_name="Oficial", related_name="creditos", on_delete=models.PROTECT)
-    cuotero = models.ForeignKey(Cuotero, related_name="creditos", on_delete=models.PROTECT)
+    numero = models.PositiveIntegerField(
+        verbose_name="Número solicitud", unique=True, blank=False, null=True)
+    cliente = models.ForeignKey(
+        Cliente, related_name="creditos", on_delete=models.PROTECT)
+    vendedor = models.ForeignKey(
+        Vendedor, verbose_name="Oficial", related_name="creditos", on_delete=models.PROTECT)
+    cuotero = models.ForeignKey(
+        Cuotero, related_name="creditos", on_delete=models.PROTECT)
     estado = models.IntegerField(choices=ESTADOS_CREDITO, default=PENDIENTE)
     comentario = models.CharField(max_length=128, blank=True, null=True)
     fecha_alta = models.DateField(default=timezone.now())
-    fecha_aprobacion = models.DateField(verbose_name="Fecha de aprobación/rechazo", null=True, blank=True)
-    fecha_desembolso = models.DateField(verbose_name="Fecha de desembolso", null=True, blank=True)
+    fecha_aprobacion = models.DateField(
+        verbose_name="Fecha de aprobación/rechazo", null=True, blank=True)
+    fecha_desembolso = models.DateField(
+        verbose_name="Fecha de desembolso", null=True, blank=True)
 
     class Meta:
         verbose_name = "Crédito"
@@ -53,10 +59,11 @@ class Credito(models.Model):
 
 
 class Cuota(models.Model):
-    credito = models.ForeignKey(Credito, related_name="cuotas", on_delete=models.CASCADE)
+    credito = models.ForeignKey(
+        Credito, related_name="cuotas", on_delete=models.CASCADE)
     fecha_vencimiento = models.DateField("Fecha de vencimiento")
     monto = models.PositiveIntegerField()
-    saldo = models.PositiveIntegerField(null=True, blank=True)
+    saldo = models.IntegerField(default=0)
 
     class Meta:
         ordering = ('fecha_vencimiento',)
@@ -66,24 +73,23 @@ class Cuota(models.Model):
     def __str__(self):
         fecha_vencimiento = self.fecha_vencimiento.strftime("%d/%m/%y")
         monto = "{:,}".format(self.monto).replace(",", ".")
+        saldo = "{:,}".format(self.saldo).replace(",", ".")
         credito_id = self.credito.numero if self.credito.numero else self.credito.id
-        return "#{}: {} - {} - {}".format(credito_id, self.get_numero_cuota(), fecha_vencimiento, monto)
+        return "No.{}: #{} - {} - Monto: {} - Saldo: {}".format(credito_id, self.get_numero_cuota(), fecha_vencimiento, monto, saldo)
 
     def get_numero_cuota(self):
-        cuotas = Cuota.objects.filter(credito=self.credito).order_by("fecha_vencimiento")
+        cuotas = Cuota.objects.filter(
+            credito=self.credito).order_by("fecha_vencimiento")
         cuotas = list(cuotas.values_list("fecha_vencimiento", flat=True))
         idx = cuotas.index(self.fecha_vencimiento)
         return idx if idx else 0
 
-    def save(self, *args, **kwargs):
-        self.saldo = self.monto
-        super(Cuota, self).save(*args, **kwargs)
-
 
 class Pago(models.Model):
-    cuota = models.ForeignKey(Cuota, related_name="pagos", on_delete=models.PROTECT)
+    cuota = models.ForeignKey(
+        Cuota, related_name="pagos", on_delete=models.PROTECT)
     fecha = models.DateField("Fecha de pago")
-    monto = models.PositiveIntegerField()
+    monto = models.IntegerField()
 
     class Meta:
         ordering = ('cuota', 'fecha')
@@ -94,10 +100,6 @@ class Pago(models.Model):
         return "Pago cuota {}, crédito de {}".format(
             {self.cuota.get_numero_cuota(), self.cuota.credito.cliente.nombre})
 
-    def save(self, *args, **kwargs):
-        # TODO: generar movimiento de caja
-        super(Pago, self).save(*args, **kwargs)
-
 
 class Comision(models.Model):
     NO_PAGADO = 1
@@ -106,12 +108,13 @@ class Comision(models.Model):
         (NO_PAGADO, "No pagado"),
         (PAGADO, "Pagado")
     )
-    vendedor = models.ForeignKey(Vendedor, related_name="comisiones", on_delete=models.PROTECT)
-    credito = models.OneToOneField(Credito, related_name="comision", on_delete=models.PROTECT)
+    vendedor = models.ForeignKey(
+        Vendedor, related_name="comisiones", on_delete=models.PROTECT)
+    credito = models.OneToOneField(
+        Credito, related_name="comision", on_delete=models.PROTECT)
     monto = models.PositiveIntegerField()
     estado = models.IntegerField(choices=ESTADOS_COMISION, default=NO_PAGADO)
 
     class Meta:
         verbose_name = "Comisión"
         verbose_name_plural = "Comisiones"
-

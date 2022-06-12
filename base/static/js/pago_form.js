@@ -45,7 +45,7 @@ $(document).ready(function() {
               cuotaSelect.append($('<option>', {
                 value: cuota.id,
                 monto: cuota.monto.replaceAll(".", ""),
-                text: `${cuota.credito}: Gs.${cuota.monto}`
+                text: cuota.label
               }));
             });
           }
