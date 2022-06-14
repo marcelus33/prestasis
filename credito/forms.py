@@ -10,12 +10,15 @@ from credito.models import Credito, Pago, Comision, Cuota
 
 
 class CreditoForm(forms.ModelForm):
-    cliente_search = forms.CharField(label="Cliente", max_length=128, required=True)
-    cliente = forms.ModelChoiceField(queryset=Cliente.objects.all(), widget=forms.HiddenInput)
+    cliente_search = forms.CharField(
+        label="Cliente", max_length=128, required=True)
+    cliente = forms.ModelChoiceField(
+        queryset=Cliente.objects.all(), widget=forms.HiddenInput)
 
     class Meta:
         model = Credito
-        fields = ['fecha_alta', 'numero', 'cliente', 'cliente_search', 'cuotero', 'vendedor']
+        fields = ['fecha_alta', 'numero', 'cliente',
+                  'cliente_search', 'cuotero', 'vendedor']
 
     def __init__(self, user=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -33,12 +36,15 @@ class CreditoForm(forms.ModelForm):
             self.fields['numero'].initial = last_id + 1
         self.fields['vendedor'].label = "Oficial"
         self.helper = FormHelper()
-        self.helper.add_input(Submit('submit', 'Guardar', css_class='btn-primary'))
+        self.helper.add_input(
+            Submit('submit', 'Guardar', css_class='btn-primary'))
 
 
 class CreditoVendedorForm(forms.ModelForm):
-    cliente_search = forms.CharField(label="Cliente", max_length=128, required=True)
-    cliente = forms.ModelChoiceField(queryset=Cliente.objects.all(), widget=forms.HiddenInput)
+    cliente_search = forms.CharField(
+        label="Cliente", max_length=128, required=True)
+    cliente = forms.ModelChoiceField(
+        queryset=Cliente.objects.all(), widget=forms.HiddenInput)
 
     class Meta:
         model = Credito
@@ -51,7 +57,8 @@ class CreditoVendedorForm(forms.ModelForm):
         self.fields['vendedor'].initial = queryset.first()
         self.fields['vendedor'].label = "Oficial"
         self.helper = FormHelper()
-        self.helper.add_input(Submit('submit', 'Guardar', css_class='btn-primary'))
+        self.helper.add_input(
+            Submit('submit', 'Guardar', css_class='btn-primary'))
         self.helper.add_input(
             Button('button', 'Agregar cliente', data_toggle="modal", data_target="#modal-cliente", css_id='add-cliente',
                    css_class='btn-success'))
@@ -75,23 +82,14 @@ class CreditoDesembolsarForm(forms.ModelForm):
             'autocomplete': 'off'
         })
         self.helper = FormHelper()
-        self.helper.add_input(Submit('submit', 'Guardar', css_class='btn-primary'))
-
-    def clean(self):
-        cleaned_data = self.cleaned_data
-        fecha_desembolso = self.data.get('fecha_desembolso')
-        fecha_desembolso = datetime.datetime.strptime(fecha_desembolso, "%d/%m/%Y").date()
-        fecha_aprobacion = self.instance.fecha_aprobacion
-        if fecha_aprobacion > fecha_desembolso:
-            msg = "La fecha de desembolso no puede ser menor a la fecha de aprobación ({}).".format(
-                fecha_aprobacion.strftime("%d/%m/%Y"))
-            self.add_error('fecha_desembolso', msg)
-        return cleaned_data
+        self.helper.add_input(
+            Submit('submit', 'Guardar', css_class='btn-primary'))
 
 
 class PagoForm(forms.ModelForm):
     cuota = forms.ModelChoiceField(queryset=Cuota.objects.none())
-    cliente_search = forms.CharField(label="Cliente", max_length=128, required=False)
+    cliente_search = forms.CharField(
+        label="Cliente", max_length=128, required=False)
     monto = forms.CharField(max_length=24,
                             validators=[RegexValidator("^\d+(\.\d+)*$", message="Sólo puede ingresar números.")])
 
@@ -113,7 +111,8 @@ class PagoForm(forms.ModelForm):
             'class': 'auto-numeric form-control',
         })
         self.helper = FormHelper()
-        self.helper.add_input(Submit('submit', 'Guardar', css_class='btn-primary'))
+        self.helper.add_input(
+            Submit('submit', 'Guardar', css_class='btn-primary'))
 
     def clean_monto(self):
         data = self.cleaned_data
@@ -127,7 +126,8 @@ class PagoForm(forms.ModelForm):
         cuota_id = int(self.data.get('cuota'))
         cuota = Cuota.objects.get(pk=cuota_id).monto
         if monto > cuota:
-            self.add_error("monto", "Monto de pago no puede ser mayor a la cuota.")
+            self.add_error(
+                "monto", "Monto de pago no puede ser mayor a la cuota.")
         return data
 
 
@@ -140,7 +140,8 @@ class ComisionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.add_input(Submit('submit', 'Guardar', css_class='btn-primary'))
+        self.helper.add_input(
+            Submit('submit', 'Guardar', css_class='btn-primary'))
 
 
 class ClienteModalForm(forms.ModelForm):
@@ -159,4 +160,5 @@ class ClienteModalForm(forms.ModelForm):
         })
         self.fields['fecha_nacimiento'].help_text = "Formato: dd/mm/YYYY"
         self.helper = FormHelper()
-        self.helper.add_input(Button('button', 'Guardar', css_class='btn-primary'))
+        self.helper.add_input(
+            Button('button', 'Guardar', css_class='btn-primary'))
