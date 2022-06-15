@@ -82,7 +82,7 @@ class Cuota(models.Model):
             credito=self.credito).order_by("fecha_vencimiento")
         cuotas = list(cuotas.values_list("fecha_vencimiento", flat=True))
         idx = cuotas.index(self.fecha_vencimiento)
-        return idx if idx else 0
+        return idx + 1 if idx else 1
 
 
 class Pago(models.Model):
