@@ -1,13 +1,18 @@
 $(document).ready(function() {
   var cuotaSelect = $("#id_cuota");
   var montoInput = $("#id_monto");
+  var moraInput = $("#id_mora");
   //
   cuotaSelect.find('option').remove();
   cuotaSelect.change(function () {
     let $this = $(this);
     let selectedOpt = $this.find(":selected");
     var monto = selectedOpt.attr("monto");
+    var mora = selectedOpt.attr("mora");
     montoInput.val(monto);
+    if (mora) {
+      moraInput.val(mora);
+    }
   });
   //
   $("#id_cliente_search").autocomplete({
@@ -45,6 +50,7 @@ $(document).ready(function() {
               cuotaSelect.append($('<option>', {
                 value: cuota.id,
                 monto: cuota.monto.replaceAll(".", ""),
+                mora: cuota.monto_mora.replaceAll(".", ""),
                 text: cuota.label
               }));
             });
