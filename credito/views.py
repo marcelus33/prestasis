@@ -5,11 +5,13 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
+from django.utils import timezone
 from django.views import View
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from base.mixins import AdminMixin, VendedorCreditoMixin, VendedorCreditoEditarMixin
-from base.models import Cliente
+from base.models import Cliente, ComisionMora
+from caja.models import MovimientoCaja, ConceptoMovimiento
 from credito.forms import CreditoForm, CreditoVendedorForm, PagoForm, ComisionForm, ClienteModalForm, \
     CreditoDesembolsarForm
 from credito.helpers import crear_cuotas, crear_movimiento_desembolso, crear_movimiento_cobro
@@ -240,6 +242,20 @@ class PagoCreateView(CreateView, AdminMixin):
             cuota_obj.save()
             # creamos Movimiento de Caja
             crear_movimiento_cobro(pago_cuota)
+            # mora
+            mora = form.cleaned_data.get('mora')
+            if mora:
+                mora = int(mora.replace('.', ''))
+                if mora > 0:
+                    concepto = ConceptoMovimiento.objects.filter(
+                        nombre__icontains='COBRO DE MORA').first()
+                    MovimientoCaja.objects.create(
+                        fecha=pago_cuota.fecha,
+                        descripcion="COBRO DE MORA",
+                        tipo=MovimientoCaja.INGRESO,
+                        concepto=concepto if concepto else None,
+                        monto=mora,
+                    )
         return super(PagoCreateView, self).form_valid(form)
 
 
@@ -307,9 +323,22 @@ class ClienteCuotasView(View):
         cliente_id = int(request.POST.get('clienteId'))
         data = []
         cuotas = Cuota.objects.filter(credito__cliente_id=cliente_id, saldo__gt=0)
-        for cuota in cuotas:
-            monto = "{:,}".format(cuota.saldo).replace(",", ".")
-            data.append(
-                {"id": cuota.id, "monto": monto, "credito": cuota.credito.get_numero_or_id(), "label": str(cuota)})
-        response = {"success": True, "data": data}
+        hoy = timezone.now().date()
+        try:
+            for cuota in cuotas:
+                dias_mora = hoy - cuota.fecha_vencimiento
+                dias_mora = dias_mora.days
+                monto_mora = "0"
+                if dias_mora > 0:
+                    comision_mora = ComisionMora.objects.filter(monto=cuota.credito.monto).first()
+                    mora_por_dia = comision_mora.mora_por_dia if comision_mora else 0
+                    monto_mora = dias_mora * mora_por_dia
+                    monto_mora = "{:,}".format(monto_mora).replace(",", ".")
+                monto = "{:,}".format(cuota.saldo).replace(",", ".")
+                data.append(
+                    {"id": cuota.id, "monto": monto, "monto_mora": monto_mora,
+                     "credito": cuota.credito.get_numero_or_id(), "label": str(cuota)})
+            response = {"success": True, "data": data}
+        except Exception as e:
+            response = {"success": False, "data": []}
         return JsonResponse(response)

@@ -92,12 +92,14 @@ class PagoForm(forms.ModelForm):
         label="Cliente", max_length=128, required=False)
     monto = forms.CharField(max_length=24,
                             validators=[RegexValidator("^\d+(\.\d+)*$", message="Sólo puede ingresar números.")])
+    mora = forms.CharField(max_length=24, required=False, help_text="Dejar en blanco para exonerar de la mora.",
+                            validators=[RegexValidator("^\d+(\.\d+)*$", message="Sólo puede ingresar números.")])
 
     class Meta:
         model = Pago
         fields = '__all__'
 
-    field_order = ['cliente_search', 'fecha', 'cuota', 'monto']
+    field_order = ['cliente_search', 'fecha', 'cuota', 'monto', 'mora']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -107,9 +109,10 @@ class PagoForm(forms.ModelForm):
             'class': 'datepicker form-control',
             'autocomplete': 'off'
         })
-        self.fields['monto'].widget.attrs.update({
-            'class': 'auto-numeric form-control',
-        })
+        for field in ['monto', 'mora']:
+            self.fields[field].widget.attrs.update({
+                'class': 'auto-numeric form-control',
+            })
         self.helper = FormHelper()
         self.helper.add_input(
             Submit('submit', 'Guardar', css_class='btn-primary'))
