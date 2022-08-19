@@ -154,6 +154,10 @@ LOGGING = {
     },
 }
 
+import dj_database_url
+DATABASES['default'] = dj_database_url.config()
+DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
+
 try:
     from prestasis.local_settings import *
 except ImportError:

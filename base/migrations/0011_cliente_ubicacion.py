@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='cliente',
             name='ubicacion',
-            field=django.contrib.gis.db.models.PointField(blank=True, geography=True, null=True, srid=4326),
+            field=django.contrib.gis.db.models.fields.PointField(blank=True, geography=True, null=True, srid=4326),
         ),
     ]
