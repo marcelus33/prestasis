@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
-
+from django.contrib.gis.db import models as gis_models
 
 class Cuotero(models.Model):
     SEMANAL = 7
@@ -93,6 +93,7 @@ class Cliente(models.Model):
     direccion = models.CharField(max_length=128, blank=True, null=True)
     telefono = models.CharField(max_length=128, blank=True, null=True)
     fecha_nacimiento = models.DateField(null=True, blank=True)
+    ubicacion = gis_models.PointField(geography=True, null=True, blank=True)
 
     class Meta:
         unique_together = [['tipo_documento', 'ci']]

@@ -1,4 +1,5 @@
 import django.forms as forms
+from django.contrib.gis import forms as gis_forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
@@ -106,10 +107,12 @@ class TipoDocumentoForm(forms.ModelForm):
 class ClienteForm(forms.ModelForm):
     ci = forms.CharField(max_length=16,
                          validators=[RegexValidator("^[0-9]*$", message="Sólo puede ingresar números.")])
+    lat = forms.CharField(widget=forms.HiddenInput())
+    lng = forms.CharField(widget=forms.HiddenInput())
 
     class Meta:
         model = Cliente
-        fields = '__all__'
+        fields = ['nombre', 'tipo_documento', 'ci', 'direccion', 'telefono', 'fecha_nacimiento', 'lat', 'lng']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
