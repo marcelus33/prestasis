@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load humanize %}
+{% load static %}
 {% block content %}
   <div class="row page-titles">
     <div class="col-md-5 col-12 align-self-center">
@@ -38,16 +39,27 @@
             </tr>
             <tr>
               <td style="width: 400px;">Teléfono:</td>
-              <td>{{ cliente.telefono }}</td>
+              <td>{{ cliente.telefono|default:"Sin declarar" }}</td>
             </tr>
             <tr>
               <td style="width: 400px;">Fecha de nacimiento:</td>
-              <td>{{ cliente.fecha_nacimiento }}</td>
+              <td>{{ cliente.fecha_nacimiento|default:"Sin declarar" }}</td>
             </tr>
             </tbody>
           </table>
         </div>
       </div>
     </div>
+    <div class="col-12">
+      <div id="map"></div>
+    </div>
   </div>
+{% endblock %}
+
+{% block extra-js %}
+  <script>
+  var LAT = '{{ cliente.ubicacion.coords.0 }}'.replace(',', '.');
+  var LNG = '{{ cliente.ubicacion.coords.1 }}'.replace(',', '.');
+  </script>
+  <script src="{% static 'js/map.js' %}"></script>
 {% endblock %}

@@ -3,13 +3,13 @@ from io import BytesIO
 
 from django.contrib import messages
 from django.contrib.auth import logout
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView
-from django.core.exceptions import PermissionDenied, ValidationError
+from django.contrib.gis.geos import Point
+from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.db.models import Q
-from django.http import HttpResponseNotFound, JsonResponse, HttpResponse
+from django.http import HttpResponseNotFound, HttpResponse
 from django.urls import reverse, reverse_lazy
 from django.views import View
 from django.views.generic import TemplateView, ListView, DetailView, CreateView, UpdateView, DeleteView, FormView
@@ -199,6 +199,15 @@ class ClienteCreateView(AdminMixin, CreateView):
     success_url = reverse_lazy('cliente.list')
     form_class = ClienteForm
 
+    def form_valid(self, form):
+        cliente = form.save(commit=False)
+        lat = float(form.cleaned_data.get('lat')) if form.cleaned_data.get('lat') else None
+        lng = float(form.cleaned_data.get('lng')) if form.cleaned_data.get('lng') else None
+        ubicacion = Point(lat, lng)
+        cliente.ubicacion = ubicacion
+        cliente.save()
+        return super().form_valid(form)
+
 
 class ClienteUpdateView(AdminMixin, UpdateView):
     template_name = 'cliente/update.html'
@@ -209,6 +218,15 @@ class ClienteUpdateView(AdminMixin, UpdateView):
 
     def get_success_url(self):
         return reverse('cliente.detail', kwargs={'cliente_id': self.object.id})
+
+    def form_valid(self, form):
+        cliente = form.save(commit=False)
+        lat = float(form.cleaned_data.get('lat')) if form.cleaned_data.get('lat') else None
+        lng = float(form.cleaned_data.get('lng')) if form.cleaned_data.get('lng') else None
+        ubicacion = Point(lat, lng)
+        cliente.ubicacion = ubicacion
+        cliente.save()
+        return super().form_valid(form)
 
 
 class ClienteDeleteView(DeleteView, AdminMixin):
@@ -311,7 +329,8 @@ class ImportadorClienteView(FormView):
         rowCount = 0
         errores = []
         tipo_documento = TipoDocumento.objects.filter(nombre__icontains="CEDULA").first()
-        tipo_documento = tipo_documento if tipo_documento else TipoDocumento.objects.filter(nombre__icontains="CÉDULA").first()
+        tipo_documento = tipo_documento if tipo_documento else TipoDocumento.objects.filter(
+            nombre__icontains="CÉDULA").first()
         try:
             with transaction.atomic():
                 for row in ws.iter_rows():
@@ -362,7 +381,3 @@ class ClienteAjaxSearchView(View):
             label = "{} - CI: {}".format(cliente.nombre, cliente.ci)
             results.append({"label": label, "value": label, "id": cliente.id})
         return HttpResponse(json.dumps(results), content_type="application/json")
-
-
-
-
