@@ -81,7 +81,7 @@ WSGI_APPLICATION = 'prestasis.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'd7a63h43vdtnq1',
         'USER': 'rengzjuletqsbz',
         'PASSWORD': '0c71c395a1751d0af946e0ee7c73e8a68b2c41e2594720f489d93d1ee971325d',
@@ -153,10 +153,6 @@ LOGGING = {
         }
     },
 }
-
-import dj_database_url
-DATABASES['default'] = dj_database_url.config()
-DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
 
 try:
     from prestasis.local_settings import *
