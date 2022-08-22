@@ -107,12 +107,13 @@ class TipoDocumentoForm(forms.ModelForm):
 class ClienteForm(forms.ModelForm):
     ci = forms.CharField(max_length=16,
                          validators=[RegexValidator("^[0-9]*$", message="Sólo puede ingresar números.")])
-    lat = forms.CharField(widget=forms.HiddenInput())
-    lng = forms.CharField(widget=forms.HiddenInput())
+    latitud_ubicacion = forms.CharField(widget=forms.HiddenInput())
+    longitud_ubicacion = forms.CharField(widget=forms.HiddenInput())
 
     class Meta:
         model = Cliente
-        fields = ['nombre', 'tipo_documento', 'ci', 'direccion', 'telefono', 'fecha_nacimiento', 'lat', 'lng']
+        fields = ['nombre', 'tipo_documento', 'ci', 'direccion', 'telefono', 'fecha_nacimiento', 'latitud_ubicacion',
+                  'longitud_ubicacion']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

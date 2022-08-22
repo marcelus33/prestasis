@@ -199,15 +199,6 @@ class ClienteCreateView(AdminMixin, CreateView):
     success_url = reverse_lazy('cliente.list')
     form_class = ClienteForm
 
-    def form_valid(self, form):
-        cliente = form.save(commit=False)
-        lat = float(form.cleaned_data.get('lat')) if form.cleaned_data.get('lat') else None
-        lng = float(form.cleaned_data.get('lng')) if form.cleaned_data.get('lng') else None
-        ubicacion = Point(lat, lng)
-        cliente.ubicacion = ubicacion
-        cliente.save()
-        return super().form_valid(form)
-
 
 class ClienteUpdateView(AdminMixin, UpdateView):
     template_name = 'cliente/update.html'
@@ -218,15 +209,6 @@ class ClienteUpdateView(AdminMixin, UpdateView):
 
     def get_success_url(self):
         return reverse('cliente.detail', kwargs={'cliente_id': self.object.id})
-
-    def form_valid(self, form):
-        cliente = form.save(commit=False)
-        lat = float(form.cleaned_data.get('lat')) if form.cleaned_data.get('lat') else None
-        lng = float(form.cleaned_data.get('lng')) if form.cleaned_data.get('lng') else None
-        ubicacion = Point(lat, lng)
-        cliente.ubicacion = ubicacion
-        cliente.save()
-        return super().form_valid(form)
 
 
 class ClienteDeleteView(DeleteView, AdminMixin):

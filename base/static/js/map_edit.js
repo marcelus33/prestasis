@@ -1,8 +1,8 @@
 $(document).ready(function () {
   var map = L.map('map').setView([-27.332449, -55.864679], 13);
   var marker = L.marker();
-  var latInput = $('#id_lat');
-  var lngInput = $('#id_lng');
+  var latInput = $('#id_latitud_ubicacion');
+  var lngInput = $('#id_longitud_ubicacion');
   //
   if (LAT && LNG) {
     latInput.val(LAT);

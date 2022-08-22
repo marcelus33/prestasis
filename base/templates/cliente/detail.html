@@ -58,8 +58,8 @@
 
 {% block extra-js %}
   <script>
-  var LAT = '{{ cliente.ubicacion.coords.0 }}'.replace(',', '.');
-  var LNG = '{{ cliente.ubicacion.coords.1 }}'.replace(',', '.');
+  var LAT = '{{ cliente.latitud_ubicacion }}'.replace(',', '.');
+  var LNG = '{{ cliente.longitud_ubicacion }}'.replace(',', '.');
   </script>
   <script src="{% static 'js/map.js' %}"></script>
 {% endblock %}

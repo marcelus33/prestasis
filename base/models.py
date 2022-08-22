@@ -93,7 +93,8 @@ class Cliente(models.Model):
     direccion = models.CharField(max_length=128, blank=True, null=True)
     telefono = models.CharField(max_length=128, blank=True, null=True)
     fecha_nacimiento = models.DateField(null=True, blank=True)
-    ubicacion = gis_models.PointField(geography=True, null=True, blank=True)
+    latitud_ubicacion = models.FloatField(null=True, blank=True)
+    longitud_ubicacion = models.FloatField(null=True, blank=True)
 
     class Meta:
         unique_together = [['tipo_documento', 'ci']]
