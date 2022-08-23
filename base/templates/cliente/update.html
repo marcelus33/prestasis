@@ -32,8 +32,8 @@
 
 {% block extra-js %}
   <script>
-    var LAT = '{{ cliente.latitud_ubicacion }}'.replace(',', '.');
-    var LNG = '{{ cliente.longitud_ubicacion }}'.replace(',', '.');
+    var LAT = '{{ cliente.latitud_ubicacion|default_if_none:"" }}'.replace(',', '.');
+    var LNG = '{{ cliente.longitud_ubicacion|default_if_none:"" }}'.replace(',', '.');
   </script>
   <script src="{% static 'js/map_edit.js' %}"></script>
 {% endblock %}
