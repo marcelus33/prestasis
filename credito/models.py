@@ -57,6 +57,20 @@ class Credito(models.Model):
     def fue_desembolsado(self):
         return self.estado == self.DESEMBOLSADO
 
+    def get_total_saldo_pendiente(self):
+        saldo_pendiente = 0
+        for cuota in self.cuotas.all():
+            saldo_pendiente += cuota.saldo
+        return saldo_pendiente
+
+    def get_total_pagos(self):
+        total_pagos = 0
+        cuotas = self.cuotas.all()
+        for cuota in cuotas:
+            for pago in cuota.pagos.all():
+                total_pagos += pago.monto
+        return total_pagos
+
 
 class Cuota(models.Model):
     credito = models.ForeignKey(
@@ -98,7 +112,7 @@ class Pago(models.Model):
 
     def __str__(self):
         return "Pago cuota {}, crédito de {}".format(
-            {self.cuota.get_numero_cuota(), self.cuota.credito.cliente.nombre})
+            self.cuota.get_numero_cuota(), self.cuota.credito.cliente.nombre)
 
 
 class Comision(models.Model):

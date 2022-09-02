@@ -147,6 +147,11 @@
                     <td></td>
                   </tr>
                 {% endfor %}
+                <tr>
+                  <td colspan="3"><strong>Totales</strong></td>
+                  <td><strong>{{ credito.get_total_saldo_pendiente|intcomma }}</strong></td>
+                  <td><strong>{{ credito.get_total_pagos|intcomma }}</strong></td>
+                </tr>
                 </tbody>
               </table>
             </div>
